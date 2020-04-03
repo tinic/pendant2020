@@ -52,6 +52,7 @@ include_directories(.)
 include_directories(stm32/Inc)
 include_directories(stm32/Drivers/CMSIS/Include)
 include_directories(stm32/Drivers/CMSIS/Device/ST/STM32F4xx/Include)
+include_directories(stm32/Middlewares/Third_Party/FatFs/src)
 
 set(LINKLDPATH stm32/${CMSISLINKLD})
 set(DEVICESTARTUPPATH stm32/Startup/${CMSISSTARTUPS})
@@ -60,6 +61,7 @@ set(SYSTEMCPATH stm32/Src/${CMSISSYSTEMC})
 # HAL
 include_directories(stm32/Drivers/STM32F4xx_HAL_Driver/Inc)
 file(GLOB_RECURSE HAL_SRC stm32/Drivers/STM32F4xx_HAL_Driver/Src/*.c)
+file(GLOB_RECURSE FATFS_SRC stm32/Middlewares/Third_Party/FatFs/src/*.c)
 file(GLOB_RECURSE STM32_SRC stm32/Src/*.c)
 
 # LwIP
@@ -75,7 +77,7 @@ endif(BOOTLOADER)
 
 set(CMAKE_ASM_FLAGS "-mcpu=${ARM_ARCH}")
 
-set(CMAKE_C_FLAGS "${COMMON_FLAGS} -std=gnu99")
+set(CMAKE_C_FLAGS "${COMMON_FLAGS} -Wno-unused-parameter -std=gnu99")
 set(CMAKE_C_FLAGS_RELEASE "-flto -Wl,-flto -Os")
 set(CMAKE_C_FLAGS_DEBUG "-Og -g3")
 
@@ -106,6 +108,7 @@ set(SOURCE_FILES
         ${SYSTEMCPATH} 
         ${HAL_SRC} 
         ${STM32_SRC}
+        ${FATFS_SRC}
         ${main_SRCS})
 
 add_executable(${PROJECT_NAME}.elf ${SOURCE_FILES})
