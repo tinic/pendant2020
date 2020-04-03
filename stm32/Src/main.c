@@ -54,6 +54,8 @@ DMA_HandleTypeDef hdma_spi2_tx;
 
 UART_HandleTypeDef huart2;
 
+PCD_HandleTypeDef hpcd_USB_OTG_FS;
+
 WWDG_HandleTypeDef hwwdg;
 
 /* USER CODE BEGIN PV */
@@ -68,7 +70,7 @@ static void MX_I2C1_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_USB_OTG_FS_USB_Init(void);
+static void MX_USB_OTG_FS_PCD_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_WWDG_Init(void);
 /* USER CODE BEGIN PFP */
@@ -113,7 +115,7 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_USART2_UART_Init();
-  MX_USB_OTG_FS_USB_Init();
+  MX_USB_OTG_FS_PCD_Init();
   MX_IWDG_Init();
   MX_WWDG_Init();
   MX_FATFS_Init();
@@ -351,7 +353,7 @@ static void MX_USART2_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USB_OTG_FS_USB_Init(void)
+static void MX_USB_OTG_FS_PCD_Init(void)
 {
 
   /* USER CODE BEGIN USB_OTG_FS_Init 0 */
@@ -361,6 +363,20 @@ static void MX_USB_OTG_FS_USB_Init(void)
   /* USER CODE BEGIN USB_OTG_FS_Init 1 */
 
   /* USER CODE END USB_OTG_FS_Init 1 */
+  hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
+  hpcd_USB_OTG_FS.Init.dev_endpoints = 4;
+  hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
+  hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
+  hpcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
+  hpcd_USB_OTG_FS.Init.vbus_sensing_enable = ENABLE;
+  hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
+  if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN USB_OTG_FS_Init 2 */
 
   /* USER CODE END USB_OTG_FS_Init 2 */
@@ -452,20 +468,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PA9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PA10 PA11 PA12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
