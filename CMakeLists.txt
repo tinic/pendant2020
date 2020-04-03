@@ -55,7 +55,7 @@ include_directories(stm32/Drivers/CMSIS/Device/ST/STM32F4xx/Include)
 include_directories(stm32/Middlewares/Third_Party/FatFs/src)
 
 set(LINKLDPATH stm32/${CMSISLINKLD})
-set(DEVICESTARTUPPATH stm32/Startup/${CMSISSTARTUPS})
+set(DEVICESTARTUPPATH stm32/${CMSISSTARTUPS})
 set(SYSTEMCPATH stm32/Src/${CMSISSYSTEMC})
 
 # HAL
