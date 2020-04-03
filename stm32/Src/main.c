@@ -34,7 +34,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#ifdef PENDANT2020
+void pendant_entry(void);
+#endif  // #ifdef PENDANT2020
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -127,6 +129,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+#ifdef PENDANT2020
+	  pendant_entry();
+#endif  // #ifdef PENDANT2020
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

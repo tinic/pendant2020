@@ -65,7 +65,7 @@ file(GLOB_RECURSE FATFS_SRC stm32/Middlewares/Third_Party/FatFs/src/*.c)
 file(GLOB_RECURSE STM32_SRC stm32/Src/*.c)
 
 # LwIP
-set(COMMON_FLAGS "-DSTM32 -DNVIC_BASE_ADDRESS=${BASE_ADDRESS} -D${STM32ARCH} -D${STM32MCU} \
+set(COMMON_FLAGS "-DPENDANT2020 -DSTM32 -DNVIC_BASE_ADDRESS=${BASE_ADDRESS} -D${STM32ARCH} -D${STM32MCU} \
                   -Wall -Wextra -Wno-error=format -Wno-strict-aliasing -mtune=${ARM_ARCH} \
                   -mcpu=${ARM_ARCH} -ffunction-sections -ffast-math -mthumb -mfloat-abi=soft")
 
@@ -97,9 +97,11 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "")
 
 if(BOOTLOADER)
     set(main_SRCS 
+        pendant.cpp
         )
 else(BOOTLOADER)
     set(main_SRCS
+        pendant.cpp
         )
 endif(BOOTLOADER)
 
