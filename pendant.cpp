@@ -23,5 +23,5 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./pendant.h"
 
 void pendant_entry(void) {
-
+    
 }
