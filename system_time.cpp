@@ -28,9 +28,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "stm32f4xx_hal.h"
 
 extern "C" TIM_HandleTypeDef htim1;
+extern "C" IWDG_HandleTypeDef hiwdg;
 
 extern "C" void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim) {
     if (htim == &htim1) {
+        HAL_IWDG_Refresh(&hiwdg);
+    
         Model::instance().SetTime(system_time());
         
         Timeline::instance().ProcessEffect();

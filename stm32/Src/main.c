@@ -62,8 +62,6 @@ TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart2;
 
-WWDG_HandleTypeDef hwwdg;
-
 /* USER CODE BEGIN PV */
 #if defined(PENDANT2020) && defined(BOOTLOADER)
 emfat_t emfat;
@@ -96,7 +94,6 @@ static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_IWDG_Init(void);
-static void MX_WWDG_Init(void);
 static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -164,7 +161,6 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_IWDG_Init();
-  MX_WWDG_Init();
   MX_TIM1_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
@@ -450,36 +446,6 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
-
-}
-
-/**
-  * @brief WWDG Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_WWDG_Init(void)
-{
-
-  /* USER CODE BEGIN WWDG_Init 0 */
-
-  /* USER CODE END WWDG_Init 0 */
-
-  /* USER CODE BEGIN WWDG_Init 1 */
-
-  /* USER CODE END WWDG_Init 1 */
-  hwwdg.Instance = WWDG;
-  hwwdg.Init.Prescaler = WWDG_PRESCALER_1;
-  hwwdg.Init.Window = 64;
-  hwwdg.Init.Counter = 64;
-  hwwdg.Init.EWIMode = WWDG_EWI_DISABLE;
-  if (HAL_WWDG_Init(&hwwdg) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN WWDG_Init 2 */
-
-  /* USER CODE END WWDG_Init 2 */
 
 }
 
