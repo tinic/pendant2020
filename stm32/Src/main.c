@@ -77,9 +77,9 @@ static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, 
 
 static emfat_entry_t emfat_entries[] =
 {
-    // name          dir    lvl offset  size             max_size        user  time  read                write
-    { "",            true,  0,  0,      0,               0,              0,    CMA,  NULL,               NULL,                {0, 0, 0, 0, NULL, NULL, NULL} }, // root
-    { "firmware.bin",false, 1,  0,      FIRMWARE_SIZE,   FIRMWARE_SIZE,  0,    CMA,  firmware_read_proc, firmware_write_proc, {0, 0, 0, 0, NULL, NULL, NULL} }, // firmware.bin
+    // name           dir    lvl offset  size             max_size        user  time  read                write
+    { "",             true,  0,  0,      0,               0,              0,    CMA,  NULL,               NULL,                { 0, 0, 0, 0, NULL, NULL, NULL } }, // root
+    { "firmware.bin", false, 1,  0,      FIRMWARE_SIZE,   FIRMWARE_SIZE,  0,    CMA,  firmware_read_proc, firmware_write_proc, { 0, 0, 0, 0, NULL, NULL, NULL } }, // firmware.bin
     { NULL }
 };
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)

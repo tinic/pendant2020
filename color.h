@@ -74,6 +74,8 @@ namespace color {
             a = clamp_to_type(from.w);
         }
 
+        rgba<T>& operator=(const rgba<T>& other) = default;
+
         rgba<T> fix_for_ws2816();
 
         uint8_t *write_grb_bytes(uint8_t *dst);
@@ -82,33 +84,33 @@ namespace color {
         T clamp_to_type(float v);
     };
 
-    template<> rgba<uint16_t> rgba<uint16_t>::fix_for_ws2816() {
-        return rgba<uint16_t>(    r < 384 ? ( ( r * 256 ) / 384 ) : r,
+    template<> inline rgba<uint16_t> rgba<uint16_t>::fix_for_ws2816() {
+        return rgba<uint16_t>(  r < 384 ? ( ( r * 256 ) / 384 ) : r,
                                 g < 384 ? ( ( g * 256 ) / 384 ) : g,
                                 b < 384 ? ( ( b * 256 ) / 384 ) : b,
                                 a < 384 ? ( ( a * 256 ) / 384 ) : a);
     }
 
-    template<> float rgba<float>::clamp_to_type(float v) {
+    template<> inline float rgba<float>::clamp_to_type(float v) {
         return v;
     }
 
-    template<> uint8_t rgba<uint8_t>::clamp_to_type(float v) {
+    template<> inline uint8_t rgba<uint8_t>::clamp_to_type(float v) {
         return v < 0.0f ? uint8_t(0) : ( v > 1.0f ? uint8_t(0xFF) : uint8_t( v * 255.f ) );
     }
 
-    template<> uint16_t rgba<uint16_t>::clamp_to_type(float v) {
+    template<> inline uint16_t rgba<uint16_t>::clamp_to_type(float v) {
         return v < 0.0f ? uint16_t(0) : ( v > 1.0f ? uint16_t(0xFFFF) : uint16_t( v * 65535.f ) );
     }
 
-    template<> uint8_t *rgba<uint8_t>::write_grb_bytes(uint8_t *dst) {
+    template<> inline uint8_t *rgba<uint8_t>::write_grb_bytes(uint8_t *dst) {
         *dst++ = g;
         *dst++ = r;
         *dst++ = b;
         return dst;
     }
 
-    template<> uint8_t *rgba<uint16_t>::write_grb_bytes(uint8_t *dst) {
+    template<> inline uint8_t *rgba<uint16_t>::write_grb_bytes(uint8_t *dst) {
         *dst++ = (g >> 8) & 0xFF;
         *dst++ = (g >> 0) & 0xFF;
         *dst++ = (r >> 8) & 0xFF;

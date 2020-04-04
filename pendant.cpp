@@ -24,17 +24,47 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "stm32f401xc.h"
 
 #include "./pendant.h"
+#include "./model.h"
+#include "./timeline.h"
 #include "./bq25895.h"
+#include "./system_time.h"
 
 #include "main.h"
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     switch(GPIO_Pin) {
         case SWITCH1_Pin: {
+            if (HAL_GPIO_ReadPin(GPIOB, SWITCH1_Pin) == GPIO_PIN_SET) {
+                Timeline::instance().ProcessDisplay();
+                if (Timeline::instance().TopDisplay().Valid()) {
+                    Timeline::instance().TopDisplay().ProcessSwitch1();
+                }
+                Model::instance().SetSwitch1Down(0.0);
+            } else {
+                Model::instance().SetSwitch1Down(system_time());
+            }
         } break;
         case SWITCH2_Pin: {
+            if (HAL_GPIO_ReadPin(GPIOB, SWITCH2_Pin) == GPIO_PIN_SET) {
+                Timeline::instance().ProcessDisplay();
+                if (Timeline::instance().TopDisplay().Valid()) {
+                    Timeline::instance().TopDisplay().ProcessSwitch2();
+                }
+                Model::instance().SetSwitch2Down(0.0);
+            } else {
+                Model::instance().SetSwitch2Down(system_time());
+            }
         } break;
         case SWITCH3_Pin: {
+            if (HAL_GPIO_ReadPin(GPIOB, SWITCH3_Pin) == GPIO_PIN_SET) {
+                Timeline::instance().ProcessDisplay();
+                if (Timeline::instance().TopDisplay().Valid()) {
+                    Timeline::instance().TopDisplay().ProcessSwitch3();
+                }
+                Model::instance().SetSwitch3Down(0.0);
+            } else {
+                Model::instance().SetSwitch3Down(system_time());
+            }
         } break;
         case DSEL_Pin: {
         } break;

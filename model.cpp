@@ -33,3 +33,34 @@ Model &Model::instance() {
 
 void Model::init() {
 }
+
+std::string Model::BatteryVoltageString() {
+    char str[8];
+    int32_t i = static_cast<int32_t>(BatteryVoltage());
+    int32_t f = static_cast<int32_t>(fmodf(BatteryVoltage(),1.0f)*100);
+    sprintf(str,"%1d.%02d", int(i), int(f));
+    return std::string(str);
+}
+
+std::string Model::SystemVoltageString() {
+    char str[8];
+    int32_t i = static_cast<int32_t>(SystemVoltage());
+    int32_t f = static_cast<int32_t>(fmodf(SystemVoltage(),1.0f)*100);
+    sprintf(str,"%1d.%02d", int(i), int(f));
+    return std::string(str);
+}
+
+std::string Model::VbusVoltageString() {
+    char str[8];
+    int32_t i = static_cast<int32_t>(VbusVoltage());
+    int32_t f = static_cast<int32_t>(fmodf(VbusVoltage(),1.0f)*100);
+    sprintf(str,"%1d.%02d", int(i), int(f));
+    return std::string(str);
+}
+
+std::string Model::ChargeCurrentString() {
+    char str[8];
+    int32_t i = static_cast<int32_t>(ChargeCurrent());
+    sprintf(str,"%d", int(i));
+    return std::string(str);
+}
