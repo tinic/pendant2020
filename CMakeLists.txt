@@ -110,6 +110,8 @@ else(BOOTLOADER)
         timeline.cpp
         system_time.cpp
         bq25895.cpp
+        model.cpp
+        leds.cpp
         )
 endif(BOOTLOADER)
 

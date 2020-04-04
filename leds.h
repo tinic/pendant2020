@@ -20,19 +20,31 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef _PENDANT_H_
-#define _PENDANT_H_
+#ifndef _LEDS_H_
+#define _LEDS_H_
 
-class leds {
+#include "./vector.h"
+
+#include <array>
+
+class Leds {
 public:
-    static leds &instance();
+    static constexpr size_t led_n = 24;
+
+    static Leds &instance();
     
     void black();
-    void commit();
-    
+    void start();
+
+    const std::array<vector::float4, Leds::led_n> &pos();
+
 private:
+    void commit();
+
+    vector::float4 leds[2][led_n];
+
     bool initialized = false;
     void init();
 };
 
-endif  // #ifndef _PENDANT_H_
+#endif  // #ifndef _LEDS_H_

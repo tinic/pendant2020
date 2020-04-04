@@ -81,6 +81,14 @@ public:
     static constexpr float MinBatteryVoltage() { return 3.5f; }
     static constexpr float MaxBatteryVoltage() { return 4.2f; }
 
+    float BatteryVoltage() const  { return battery_voltage; }
+    void SetBatteryVoltage(float voltage) { battery_voltage = voltage; }
+    std::string BatteryVoltageString();
+
+    float SystemVoltage() const  { return system_voltage; }
+    void SetSystemVoltage(float voltage) { system_voltage = voltage; }
+    std::string SystemVoltageString();
+
     float VbusVoltage() const  { return vbus_voltage; }
     void SetVbusVoltage(float voltage) { vbus_voltage = voltage; }
     std::string VbusVoltageString();
@@ -88,10 +96,6 @@ public:
     float ChargeCurrent() const  { return charge_current; }
     void SetChargeCurrent(float current) { charge_current = current; }
     std::string ChargeCurrentString();
-
-    float BatteryVoltage() const  { return battery_voltage; }
-    void SetBatteryVoltage(float voltage) { battery_voltage = voltage; }
-    std::string BatteryVoltageString();
 
 private:
 

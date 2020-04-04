@@ -31,12 +31,18 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace vector {
 
     struct float4 {
-
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
         float w = 0.0f;
-        
+
+        float4() {
+            this->x = 0.0f;
+            this->y = 0.0f;
+            this->z = 0.0f;
+            this->w = 0.0f;
+        }
+
         float4(uint32_t c, float a) {
             this->x = ((c>>16)&0xFF)*(1.0f/255.0f);
             this->y = ((c>> 8)&0xFF)*(1.0f/255.0f);
@@ -57,6 +63,8 @@ namespace vector {
             this->z = _z;
             this->w = _w;
         }
+
+        float4 &operator=(const float4& other) = default;
 
         float4 &operator+=(float v) {
             this->x += v;

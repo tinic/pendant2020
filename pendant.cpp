@@ -28,6 +28,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./timeline.h"
 #include "./bq25895.h"
 #include "./system_time.h"
+#include "./leds.h"
 
 #include "main.h"
 
@@ -92,6 +93,7 @@ void Pendant::init() {
         BQ25895::instance().SetInputCurrent(500);
     }
 
+    Leds::instance().start();
 }
 
 void Pendant::Run() {
