@@ -53,6 +53,8 @@ include_directories(stm32/Inc)
 include_directories(stm32/Drivers/CMSIS/Include)
 include_directories(stm32/Drivers/CMSIS/Device/ST/STM32F4xx/Include)
 include_directories(stm32/Middlewares/Third_Party/FatFs/src)
+include_directories(stm32/Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Inc/)
+include_directories(stm32/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/)
 
 set(LINKLDPATH stm32/${CMSISLINKLD})
 set(DEVICESTARTUPPATH stm32/${CMSISSTARTUPS})
@@ -62,6 +64,8 @@ set(SYSTEMCPATH stm32/Src/${CMSISSYSTEMC})
 include_directories(stm32/Drivers/STM32F4xx_HAL_Driver/Inc)
 file(GLOB_RECURSE HAL_SRC stm32/Drivers/STM32F4xx_HAL_Driver/Src/*.c)
 file(GLOB_RECURSE FATFS_SRC stm32/Middlewares/Third_Party/FatFs/src/*.c)
+file(GLOB_RECURSE MSC_SRC stm32/Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Src/*.c)
+file(GLOB_RECURSE USB_SRC stm32/Middlewares/ST/STM32_USB_Device_Library/Core/Src/*.c)
 file(GLOB_RECURSE STM32_SRC stm32/Src/*.c)
 
 # LwIP
@@ -113,6 +117,8 @@ set(SOURCE_FILES
         ${HAL_SRC} 
         ${STM32_SRC}
         ${FATFS_SRC}
+        ${MSC_SRC}
+        ${USB_SRC}
         ${main_SRCS})
 
 add_executable(${PROJECT_NAME}.elf ${SOURCE_FILES})
