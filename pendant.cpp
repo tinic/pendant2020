@@ -28,6 +28,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern "C" {
     void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+        (void)GPIO_Pin;
     }
 }
 

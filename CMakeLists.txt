@@ -99,6 +99,10 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "")
 
 if(BOOTLOADER)
     set(main_SRCS 
+        bootloader.cpp
+        timeline.cpp
+        system_time.cpp
+        bq25895.cpp
         )
 else(BOOTLOADER)
     set(main_SRCS
@@ -110,13 +114,14 @@ else(BOOTLOADER)
 endif(BOOTLOADER)
 
 set(SOURCE_FILES 
-        ${DEVICESTARTUPPATH}
-        ${SYSTEMCPATH} 
-        ${HAL_SRC} 
-        ${STM32_SRC}
-        ${MSC_SRC}
+        ${main_SRCS}
         ${USB_SRC}
-        ${main_SRCS})
+        ${MSC_SRC}
+        ${STM32_SRC}
+        ${HAL_SRC} 
+        ${SYSTEMCPATH} 
+        ${DEVICESTARTUPPATH}
+        )
 
 add_executable(${PROJECT_NAME}.elf ${SOURCE_FILES})
 

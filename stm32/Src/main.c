@@ -37,6 +37,10 @@
 #if defined(PENDANT2020) && !defined(BOOTLOADER)
 void pendant_entry(void);
 #endif  //  #if defined(PENDANT2020) && !defined(BOOTLOADER)
+
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+void bootloader_entry(void);
+#endif  //  #if defined(PENDANT2020) && defined(BOOTLOADER)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -176,6 +180,10 @@ int main(void)
   {
 #if defined(PENDANT2020) && !defined(BOOTLOADER)
     pendant_entry();
+#endif  //  #if defined(PENDANT2020) && !defined(BOOTLOADER)
+
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+    bootloader_entry();
 #endif  //  #if defined(PENDANT2020) && !defined(BOOTLOADER)
 
     /* USER CODE END WHILE */

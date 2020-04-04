@@ -32,7 +32,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace color {
 
-	template<class T> struct rgba {
+    template<class T> struct rgba {
 
         T r;
         T g;
@@ -78,16 +78,16 @@ namespace color {
 
         uint8_t *write_grb_bytes(uint8_t *dst);
 
-	private:
+    private:
         T clamp_to_type(float v);
     };
 
-	template<> rgba<uint16_t> rgba<uint16_t>::fix_for_ws2816() {
-		return rgba<uint16_t>(	r < 384 ? ( ( r * 256 ) / 384 ) : r,
-								g < 384 ? ( ( g * 256 ) / 384 ) : g,
-								b < 384 ? ( ( b * 256 ) / 384 ) : b,
-								a < 384 ? ( ( a * 256 ) / 384 ) : a);
-	}
+    template<> rgba<uint16_t> rgba<uint16_t>::fix_for_ws2816() {
+        return rgba<uint16_t>(    r < 384 ? ( ( r * 256 ) / 384 ) : r,
+                                g < 384 ? ( ( g * 256 ) / 384 ) : g,
+                                b < 384 ? ( ( b * 256 ) / 384 ) : b,
+                                a < 384 ? ( ( a * 256 ) / 384 ) : a);
+    }
 
     template<> float rgba<float>::clamp_to_type(float v) {
         return v;
