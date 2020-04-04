@@ -45,7 +45,7 @@ set(STM32ARCH STM32F4)
 set(STM32MCU STM32F401xC)
 
 # CMSIS
-set(CMSISSTARTUPS startup_stm32f401ccux.S)
+set(CMSISSTARTUPS startup_stm32f401ccux.s)
 set(CMSISSYSTEMC system_stm32f4xx.c)
 
 include_directories(.)
@@ -56,7 +56,7 @@ include_directories(stm32/Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Inc/
 include_directories(stm32/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/)
 
 set(LINKLDPATH stm32/${CMSISLINKLD})
-set(DEVICESTARTUPPATH stm32/${CMSISSTARTUPS})
+set(DEVICESTARTUPPATH stm32/Startup/${CMSISSTARTUPS})
 set(SYSTEMCPATH stm32/Src/${CMSISSYSTEMC})
 
 # HAL
@@ -136,5 +136,5 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMAND ${CMAKE_SIZE} ${PROJECT_NAME}.elf
         COMMENT "Building ${HEX_FILE} \nBuilding ${BIN_FILE}")
 
-set(PROGRAM_CMD "sudo openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c \"program ${PROJECT_NAME}.bin ${BASE_ADDRESS} verify reset exit\"")
+set(PROGRAM_CMD "sudo openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c \"program ${PROJECT_NAME}.bin ${BASE_ADDRESS} verify reset exit\"")
 install(CODE "execute_process(COMMAND ${PROGRAM_CMD})")
