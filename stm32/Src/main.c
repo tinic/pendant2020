@@ -70,15 +70,15 @@ emfat_t emfat;
 #define CMA_TIME EMFAT_ENCODE_CMA_TIME(9,7,2020,12,0,0)
 #define CMA { CMA_TIME, CMA_TIME, CMA_TIME }
 
-void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t userdata);
-void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, size_t userdata);
+static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t userdata);
+static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, size_t userdata);
 
 static emfat_entry_t emfat_entries[] =
 {
-	// name          dir    lvl offset  size             max_size        user  time  read                write
-	{ "",            true,  0,  0,      0,               0,              0,    CMA,  NULL,               NULL }, // root
-	{ "firmware.bin",false, 1,  0,      FIRMWARE_SIZE,   FIRMWARE_SIZE,  0,    CMA,  firmware_read_proc, firmware_write_proc }, // firmware.bin
-	{ NULL }
+    // name          dir    lvl offset  size             max_size        user  time  read                write
+    { "",            true,  0,  0,      0,               0,              0,    CMA,  NULL,               NULL,                {0, 0, 0, 0, NULL, NULL, NULL} }, // root
+    { "firmware.bin",false, 1,  0,      FIRMWARE_SIZE,   FIRMWARE_SIZE,  0,    CMA,  firmware_read_proc, firmware_write_proc, {0, 0, 0, 0, NULL, NULL, NULL} }, // firmware.bin
+    { NULL }
 };
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
 /* USER CODE END PV */
@@ -102,26 +102,26 @@ static void MX_TIM1_Init(void);
 /* USER CODE BEGIN 0 */
 #if defined(PENDANT2020) && defined(BOOTLOADER)
 static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t userdata) {
-	for (int32_t c = 0; c < size/sizeof(uint64_t); c++) {
-		*data ++ = ((const uint8_t *)(FIRMWARE_ADDR + FIRMWARE_START))[c];
-	}
+    for (int c = 0; c < (int)(size/sizeof(uint64_t)); c++) {
+        *data ++ = ((const uint8_t *)(FIRMWARE_ADDR + FIRMWARE_START))[c];
+    }
 }
 
 static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, size_t userdata) {
-	HAL_FLASH_Lock();
-	for (int32_t c = 0; c < size/sizeof(uint64_t); c++) {
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FIRMWARE_START + offset + c*sizeof(uint64_t),
-				((uint64_t)(data[c*sizeof(uint64_t) + 0]) <<  0) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 1]) <<  8) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 2]) << 16) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 3]) << 24) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 4]) << 32) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 5]) << 40) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 6]) << 48) |
-				((uint64_t)(data[c*sizeof(uint64_t) + 7]) << 56)
-		);
-	}
-	HAL_FLASH_Unlock();
+    HAL_FLASH_Lock();
+    for (int c = 0; c < (int)(size/sizeof(uint64_t)); c++) {
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FIRMWARE_START + offset + c*sizeof(uint64_t),
+                ((uint64_t)(data[c*sizeof(uint64_t) + 0]) <<  0) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 1]) <<  8) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 2]) << 16) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 3]) << 24) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 4]) << 32) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 5]) << 40) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 6]) << 48) |
+                ((uint64_t)(data[c*sizeof(uint64_t) + 7]) << 56)
+        );
+    }
+    HAL_FLASH_Unlock();
 }
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
 /* USER CODE END 0 */
