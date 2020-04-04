@@ -27,9 +27,11 @@ class Model {
 public:
     static Model &instance();
     
-    uint32_t Time() const { return 0; }
+    double Time() const { return time; }
+    void SetTime(double _time)  { time = _time; }
     
 private:
+    double time = 0.0;
 
     void init();
     bool initialized = false;

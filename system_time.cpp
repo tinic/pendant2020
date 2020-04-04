@@ -21,8 +21,22 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include "./system_time.h"
+#include "./model.h"
+#include "./timeline.h"
 
 #include "stm32f401xc.h"
+#include "stm32f4xx_hal.h"
+
+extern "C" TIM_HandleTypeDef htim1;
+
+extern "C" void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim) {
+    if (htim == &htim1) {
+        Model::instance().SetTime(system_time());
+        
+        Timeline::instance().ProcessEffect();
+        Timeline::instance().ProcessDisplay();
+    }
+}
 
 // Generate system time based on 32-bit cycle count
 static uint64_t large_dwt_cyccnt() {

@@ -26,10 +26,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./pendant.h"
 #include "./bq25895.h"
 
-extern "C" {
-    void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-        (void)GPIO_Pin;
-    }
+extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    (void)GPIO_Pin;
 }
 
 Pendant &Pendant::instance() {
