@@ -20,44 +20,19 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#ifndef _PENDANT_H_
+#define _PENDANT_H_
 
-#include "stm32f401xc.h"
+class leds {
+public:
+    static leds &instance();
+    
+    void black();
+    void commit();
+    
+private:
+    bool initialized = false;
+    void init();
+};
 
-#include "./pendant.h"
-#include "./bq25895.h"
-
-extern "C" {
-    void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-    }
-}
-
-Pendant &Pendant::instance() {
-    static Pendant pendant;
-    if (!pendant.initialized) {
-        pendant.initialized = true;
-        pendant.init();
-    }
-    return pendant;
-}
-
-void Pendant::init() {
-
-    if (BQ25895::instance().DevicePresent()) {
-        BQ25895::instance().SetBoostVoltage(4550);
-        BQ25895::instance().DisableWatchdog();
-        BQ25895::instance().DisableOTG();
-        BQ25895::instance().OneShotADC();
-        BQ25895::instance().SetInputCurrent(500);
-    }
-
-}
-
-void Pendant::Run() {
-    while (1) {
-        __WFI();
-    }
-}
-
-void pendant_entry(void) {
-    Pendant::instance().Run();
-}
+endif  // #ifndef _PENDANT_H_

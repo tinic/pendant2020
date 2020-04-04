@@ -25,4 +25,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern "C" void pendant_entry(void);
 
+class Pendant {
+public:
+    static Pendant &instance();
+    
+    void Run();
+
+private:
+    bool initialized = false;
+    void init();
+};
+
 #endif  // #ifndef _PENDANT_H_

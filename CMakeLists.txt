@@ -97,11 +97,13 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "")
 
 if(BOOTLOADER)
     set(main_SRCS 
-        pendant.cpp
         )
 else(BOOTLOADER)
     set(main_SRCS
         pendant.cpp
+        timeline.cpp
+        system_time.cpp
+        bq25895.cpp
         )
 endif(BOOTLOADER)
 

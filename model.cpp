@@ -20,44 +20,16 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#include "./model.h"
 
-#include "stm32f401xc.h"
-
-#include "./pendant.h"
-#include "./bq25895.h"
-
-extern "C" {
-    void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+Model &Model::instance() {
+    static Model model;
+    if (!model.initialized) {
+        model.initialized = true;
+        model.init();
     }
+    return model;
 }
 
-Pendant &Pendant::instance() {
-    static Pendant pendant;
-    if (!pendant.initialized) {
-        pendant.initialized = true;
-        pendant.init();
-    }
-    return pendant;
-}
-
-void Pendant::init() {
-
-    if (BQ25895::instance().DevicePresent()) {
-        BQ25895::instance().SetBoostVoltage(4550);
-        BQ25895::instance().DisableWatchdog();
-        BQ25895::instance().DisableOTG();
-        BQ25895::instance().OneShotADC();
-        BQ25895::instance().SetInputCurrent(500);
-    }
-
-}
-
-void Pendant::Run() {
-    while (1) {
-        __WFI();
-    }
-}
-
-void pendant_entry(void) {
-    Pendant::instance().Run();
+void Model::init() {
 }
