@@ -155,6 +155,25 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+  // Check user button
+  if (HAL_GPIO_ReadPin(GPIOB, SWITCH3_Pin) != 0) {
+      /* Check if valid stack address (RAM address) then jump to user application */
+      if ((((*(__IO uint32_t*)(FIRMWARE_ADDR+FIRMWARE_START))) & 0x2FFE0000 ) == 0x20000000) {
+          typedef void (*pFunction)(void);
+          static pFunction Jump_To_Application;
+          static uint32_t JumpAddress;
+          /* Jump to user application */
+          JumpAddress = *(__IO uint32_t*)(FIRMWARE_ADDR+FIRMWARE_START+4);
+          Jump_To_Application = (pFunction) JumpAddress;
+          /* Initialize user application's Stack Pointer */
+          __set_MSP(*(__IO uint32_t*)(FIRMWARE_ADDR+FIRMWARE_START));
+          Jump_To_Application();
+      }
+  }
+#endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
+
   MX_DMA_Init();
   MX_I2C1_Init();
   MX_SPI1_Init();
