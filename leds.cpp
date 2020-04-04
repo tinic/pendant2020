@@ -25,7 +25,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./timeline.h"
 #include "./model.h"
 
+#include "stm32f401xc.h"
+#include "stm32f4xx_hal.h"
+
 #include <memory.h>
+
+extern "C" SPI_HandleTypeDef hspi1;
+extern "C" SPI_HandleTypeDef hspi2;
 
 Leds &Leds::instance() {
     static Leds leds;
@@ -153,18 +159,32 @@ void Leds::commit() {
         return ptr;
     };
 
-    for (size_t d = 0; d < 2; d++) {
-        uint32_t *ptr = &ws2816buf[d][0];
-        memset(ptr, 0, sizeof(uint32_t) * preamble_len);
-        ptr += preamble_len;
-        for (size_t c = 0; c < Leds::led_n; c++) {
-            color::rgba<uint16_t> pixel(color::rgba<uint16_t>(color::convert::instance().CIELUV2lRGB(leds[d][c])).fix_for_ws2816());
-            ptr = convert_to_one_wire(ptr, (pixel.g >> 8) & 0xFF);
-            ptr = convert_to_one_wire(ptr, (pixel.g >> 0) & 0xFF);
-            ptr = convert_to_one_wire(ptr, (pixel.r >> 8) & 0xFF);
-            ptr = convert_to_one_wire(ptr, (pixel.r >> 8) & 0xFF);
-            ptr = convert_to_one_wire(ptr, (pixel.b >> 8) & 0xFF);
-            ptr = convert_to_one_wire(ptr, (pixel.b >> 8) & 0xFF);
-        }
+    uint32_t *ptr0 = &ws2816buf[0][0];
+    memset(ptr0, 0, sizeof(uint32_t) * preamble_len);
+    ptr0 += preamble_len;
+    
+    uint32_t *ptr1 = &ws2816buf[1][0];
+    memset(ptr1, 0, sizeof(uint32_t) * preamble_len);
+    ptr1 += preamble_len;
+
+    for (size_t c = 0; c < Leds::led_n; c++) {
+        color::rgba<uint16_t> pixel0(color::rgba<uint16_t>(color::convert::instance().CIELUV2lRGB(leds[0][c])).fix_for_ws2816());
+        ptr0 = convert_to_one_wire(ptr0, (pixel0.g >> 8) & 0xFF);
+        ptr0 = convert_to_one_wire(ptr0, (pixel0.g >> 0) & 0xFF);
+        ptr0 = convert_to_one_wire(ptr0, (pixel0.r >> 8) & 0xFF);
+        ptr0 = convert_to_one_wire(ptr0, (pixel0.r >> 8) & 0xFF);
+        ptr0 = convert_to_one_wire(ptr0, (pixel0.b >> 8) & 0xFF);
+        ptr0 = convert_to_one_wire(ptr0, (pixel0.b >> 8) & 0xFF);
+
+        color::rgba<uint16_t> pixel1(color::rgba<uint16_t>(color::convert::instance().CIELUV2lRGB(leds[1][c])).fix_for_ws2816());
+        ptr1 = convert_to_one_wire(ptr1, (pixel1.g >> 8) & 0xFF);
+        ptr1 = convert_to_one_wire(ptr1, (pixel1.g >> 0) & 0xFF);
+        ptr1 = convert_to_one_wire(ptr1, (pixel1.r >> 8) & 0xFF);
+        ptr1 = convert_to_one_wire(ptr1, (pixel1.r >> 8) & 0xFF);
+        ptr1 = convert_to_one_wire(ptr1, (pixel1.b >> 8) & 0xFF);
+        ptr1 = convert_to_one_wire(ptr1, (pixel1.b >> 8) & 0xFF);
     }
+    
+    HAL_SPI_Transmit_DMA(&hspi1, reinterpret_cast<uint8_t *>(&ws2816buf[0][0]), array_len * sizeof(uint32_t));
+    HAL_SPI_Transmit_DMA(&hspi2, reinterpret_cast<uint8_t *>(&ws2816buf[1][0]), array_len * sizeof(uint32_t));
 }
