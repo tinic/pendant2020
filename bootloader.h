@@ -20,21 +20,20 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef MODEL_H_
-#define MODEL_H_
+#ifndef _BOOTLOADER_H_
+#define _BOOTLOADER_H_
 
-class Model {
+extern "C" void bootloader_entry(void);
+
+class Bootloader {
 public:
-    static Model &instance();
+    static Bootloader &instance();
     
-    double Time() const { return time; }
-    void SetTime(double _time)  { time = _time; }
-    
-private:
-    double time = 0.0;
+    void Run();
 
-    void init();
+private:
     bool initialized = false;
+    void init();
 };
 
-#endif /* MODEL_H_ */
+#endif  // #ifndef _BOOTLOADER_H_

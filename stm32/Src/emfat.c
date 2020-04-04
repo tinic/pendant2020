@@ -529,9 +529,12 @@ void fill_entry(dir_entry *entry, const char *name, uint8_t attr, uint32_t clust
 	memset(entry->name, ' ', FILE_NAME_SHRT_LEN + FILE_NAME_EXTN_LEN);
 	memcpy(entry->name, name, l1);
 	memcpy(entry->extn, name + dot_pos + 1, l2);
-	for (i = 0; i < FILE_NAME_SHRT_LEN + FILE_NAME_EXTN_LEN; i++)
+	for (i = 0; i < FILE_NAME_SHRT_LEN; i++)
 		if (entry->name[i] >= 'a' && entry->name[i] <= 'z')
 			entry->name[i] -= 0x20;
+	for (i = 0; i < FILE_NAME_EXTN_LEN; i++)
+		if (entry->extn[i] >= 'a' && entry->extn[i] <= 'z')
+			entry->extn[i] -= 0x20;
 
 	entry->attr = attr;
 	entry->reserved = 24;

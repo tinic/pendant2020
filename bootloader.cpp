@@ -20,21 +20,45 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef MODEL_H_
-#define MODEL_H_
 
-class Model {
-public:
-    static Model &instance();
-    
-    double Time() const { return time; }
-    void SetTime(double _time)  { time = _time; }
-    
-private:
-    double time = 0.0;
+#include "stm32f401xc.h"
 
-    void init();
-    bool initialized = false;
-};
+#include "./bootloader.h"
+#include "./bq25895.h"
 
-#endif /* MODEL_H_ */
+extern "C" {
+    void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+        (void)GPIO_Pin;
+    }
+}
+
+Bootloader &Bootloader::instance() {
+    static Bootloader bootloader;
+    if (!bootloader.initialized) {
+        bootloader.initialized = true;
+        bootloader.init();
+    }
+    return bootloader;
+}
+
+void Bootloader::init() {
+
+    if (BQ25895::instance().DevicePresent()) {
+        BQ25895::instance().SetBoostVoltage(4550);
+        BQ25895::instance().DisableWatchdog();
+        BQ25895::instance().DisableOTG();
+        BQ25895::instance().OneShotADC();
+        BQ25895::instance().SetInputCurrent(500);
+    }
+
+}
+
+void Bootloader::Run() {
+    while (1) {
+        __WFI();
+    }
+}
+
+void bootloader_entry(void) {
+    Bootloader::instance().Run();
+}

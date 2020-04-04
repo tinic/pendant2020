@@ -21,8 +21,11 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include "./timeline.h"
-
 #include "./model.h"
+#include "./system_time.h"
+
+#include "stm32f401xc.h"
+#include "stm32f4xx_hal.h"
 
 #include <limits>
 #include <array>
