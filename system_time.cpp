@@ -33,11 +33,22 @@ extern "C" IWDG_HandleTypeDef hiwdg;
 extern "C" void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim) {
     if (htim == &htim1) {
         HAL_IWDG_Refresh(&hiwdg);
+
+        double nowtime = system_time();
+
+        Model::instance().SetTime(nowtime);
     
-        Model::instance().SetTime(system_time());
-        
-        Timeline::instance().ProcessEffect();
-        Timeline::instance().ProcessDisplay();
+        static double effecttime = 0.0f;
+        if ( ( nowtime - effecttime ) >= (1.0 / 60.0)) {
+            effecttime = nowtime;
+            Timeline::instance().ProcessEffect();
+        }
+
+        static double displaytime = 0.0f;
+        if ( ( nowtime - displaytime ) >= (1.0 / 30.0)) {
+            displaytime = nowtime;
+            Timeline::instance().ProcessDisplay();
+        }
     }
 }
 

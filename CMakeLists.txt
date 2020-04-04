@@ -112,6 +112,7 @@ else(BOOTLOADER)
         bq25895.cpp
         model.cpp
         leds.cpp
+        color.cpp
         )
 endif(BOOTLOADER)
 

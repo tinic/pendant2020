@@ -120,6 +120,36 @@ namespace color {
         return dst;
     }
 
+    class gradient {
+    public:
+        void init(const vector::float4 stops[], size_t n);
+        bool check_init() const { return !initialized; }
+
+        vector::float4 repeat(float i);
+        vector::float4 reflect(float i);
+        vector::float4 clamp(float i);
+
+    private:
+        static constexpr size_t colors_n = 256;
+        static constexpr float colors_mul = 255.0;
+        static constexpr size_t colors_mask = 0xFF;
+        vector::float4 colors[colors_n];
+        bool initialized = false;
+    };
+
+    class convert {
+    public:
+        static convert &instance();
+
+        vector::float4 sRGB2CIELUV(const rgba<uint8_t> &);
+        vector::float4 CIELUV2lRGB(const vector::float4 &);
+
+    private:
+        bool initialized = false;
+        void init();
+        std::array<float, 256> sRGB2lRGB;
+    };
+
 }
 
 #endif  // #ifndef _COLOR_H_

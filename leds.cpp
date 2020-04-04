@@ -158,7 +158,7 @@ void Leds::commit() {
         memset(ptr, 0, sizeof(uint32_t) * preamble_len);
         ptr += preamble_len;
         for (size_t c = 0; c < Leds::led_n; c++) {
-            color::rgba<uint16_t> pixel(color::rgba<uint16_t>(leds[d][c]).fix_for_ws2816());
+            color::rgba<uint16_t> pixel(color::rgba<uint16_t>(color::convert::instance().CIELUV2lRGB(leds[d][c])).fix_for_ws2816());
             ptr = convert_to_one_wire(ptr, (pixel.g >> 8) & 0xFF);
             ptr = convert_to_one_wire(ptr, (pixel.g >> 0) & 0xFF);
             ptr = convert_to_one_wire(ptr, (pixel.r >> 8) & 0xFF);
@@ -168,4 +168,3 @@ void Leds::commit() {
         }
     }
 }
-
