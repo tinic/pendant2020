@@ -23,7 +23,7 @@
 #include "usbd_storage_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "emfat.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,7 +32,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+extern emfat_t emfat;
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -106,8 +106,8 @@ const int8_t STORAGE_Inquirydata_FS[] = {/* 36 */
   0x00,
   0x00,	
   0x00,
-  'S', 'T', 'M', ' ', ' ', ' ', ' ', ' ', /* Manufacturer : 8 bytes */
-  'P', 'r', 'o', 'd', 'u', 'c', 't', ' ', /* Product      : 16 Bytes */
+  'T', 'i', 'n', 'i', 'c', 'U', 'r', 'o', /* Manufacturer : 8 bytes */
+  'D', 'u', 'c', 'k', 'P', 'o', 'n', 'd', /* Product      : 16 Bytes */
   ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
   '0', '.', '0' ,'1'                      /* Version      : 4 Bytes */
 }; 
@@ -192,8 +192,12 @@ int8_t STORAGE_Init_FS(uint8_t lun)
 int8_t STORAGE_GetCapacity_FS(uint8_t lun, uint32_t *block_num, uint16_t *block_size)
 {
   /* USER CODE BEGIN 3 */
-  *block_num  = STORAGE_BLK_NBR;
   *block_size = STORAGE_BLK_SIZ;
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+  *block_num  = emfat.disk_sectors;
+#else //  #if defined(PENDANT2020) && defined(BOOTLOADER)
+  *block_num = STORAGE_BLK_NBR;
+#endif //  #if defined(PENDANT2020) && defined(BOOTLOADER)
   return (USBD_OK);
   /* USER CODE END 3 */
 }
@@ -230,6 +234,9 @@ int8_t STORAGE_IsWriteProtected_FS(uint8_t lun)
 int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
 {
   /* USER CODE BEGIN 6 */
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+  emfat_read(&emfat, buf, blk_addr, blk_len);
+#endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
   return (USBD_OK);
   /* USER CODE END 6 */
 }
@@ -242,6 +249,9 @@ int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t bl
 int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
 {
   /* USER CODE BEGIN 7 */
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+  emfat_write(&emfat, buf, blk_addr, blk_len);
+#endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
   return (USBD_OK);
   /* USER CODE END 7 */
 }
