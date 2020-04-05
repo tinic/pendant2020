@@ -92,19 +92,20 @@ namespace color {
                                 a < 384 ? ( ( a * 256 ) / 384 ) : a);
     }
 
-    template<> inline float rgba<float>::clamp_to_type(float v) {
+    
+    template<> __attribute__((always_inline)) inline float rgba<float>::clamp_to_type(float v) {
         return v;
     }
 
-    template<> inline uint8_t rgba<uint8_t>::clamp_to_type(float v) {
+    template<> __attribute__((always_inline)) inline uint8_t rgba<uint8_t>::clamp_to_type(float v) {
         return v < 0.0f ? uint8_t(0) : ( v > 1.0f ? uint8_t(0xFF) : uint8_t( v * 255.f ) );
     }
 
-    template<> inline uint16_t rgba<uint16_t>::clamp_to_type(float v) {
+    template<> __attribute__((always_inline)) inline uint16_t rgba<uint16_t>::clamp_to_type(float v) {
         return v < 0.0f ? uint16_t(0) : ( v > 1.0f ? uint16_t(0xFFFF) : uint16_t( v * 65535.f ) );
     }
 
-    template<> inline uint8_t *rgba<uint8_t>::write_grb_bytes(uint8_t *dst) {
+    template<> __attribute__((always_inline)) inline uint8_t *rgba<uint8_t>::write_grb_bytes(uint8_t *dst) {
         *dst++ = g;
         *dst++ = r;
         *dst++ = b;

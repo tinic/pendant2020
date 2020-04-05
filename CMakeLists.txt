@@ -68,8 +68,8 @@ file(GLOB_RECURSE STM32_SRC stm32/Src/*.c)
 
 # LwIP
 set(COMMON_FLAGS "-DPENDANT2020 -DSTM32 -DNVIC_BASE_ADDRESS=${BASE_ADDRESS} -D${STM32ARCH} -D${STM32MCU} \
-                  -Wall -Wextra -Wno-error=format -Wno-strict-aliasing -mtune=${ARM_ARCH} \
-                  -mcpu=${ARM_ARCH} -ffunction-sections -ffast-math -mthumb -mfloat-abi=soft")
+                  -Wall -Wextra -Wno-error=format -Wno-strict-aliasing -ffast-math \
+                  -ffunction-sections -mthumb -mcpu=${ARM_ARCH} -mfloat-abi=softfp -mfpu=fpv4-sp-d16")
 
 if(BOOTLOADER)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DBOOTLOADER=1")
@@ -90,7 +90,7 @@ set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -Wall -Wextra \
 set(CMAKE_CXX_FLAGS_RELEASE "-flto -Wl,-flto -Os")
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g3")
 
-set(CMAKE_EXE_LINKER_FLAGS "-g3 --specs=nosys.specs \
+set(CMAKE_EXE_LINKER_FLAGS "${COMMON_FLAGS} -g3 --specs=nosys.specs \
     --specs=nano.specs -Wl,--warn-unresolved-symbols \
     -Wl,--no-wchar-size-warning -Wl,--start-group -lm \
     -Wl,--end-group -Wl,-gc-sections \
