@@ -144,7 +144,7 @@ namespace color {
         static convert &instance();
 
         vector::float4 sRGB2CIELUV(const rgba<uint8_t> &);
-        vector::float4 CIELUV2lRGB(const vector::float4 &);
+        vector::float4 CIELUV2sRGB(const vector::float4 &);
 
     private:
         bool initialized = false;

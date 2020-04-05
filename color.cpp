@@ -88,14 +88,27 @@ convert &convert::instance() {
 }
 
 __attribute__ ((hot, optimize("O3")))
+static float sRGBTransfer(float a) {
+    if (a <= 0.0f) {
+        return 0.0f;
+    } else if (a < 0.0031308f) {
+        return a * 12.92f;
+    } else if ( a < 1.0f ) {
+        return powf(a, 1.0f/2.4f) * 1.055f - 0.055f;
+    } else {
+        return 1.0f;
+    }
+}
+
+__attribute__ ((hot, optimize("O3")))
 vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
     float r = sRGB2lRGB[in.r];
     float g = sRGB2lRGB[in.g];
     float b = sRGB2lRGB[in.b];
 
-	float X = 0.4124564f * r + 0.3575761f * g + 0.1804375f * b;
-	float Y = 0.2126729f * r + 0.7151522f * g + 0.0721750f * b;
-	float Z = 0.0193339f * r + 0.1191920f * g + 0.9503041f * b;
+    float X = 0.4124564f * r + 0.3575761f * g + 0.1804375f * b;
+    float Y = 0.2126729f * r + 0.7151522f * g + 0.0721750f * b;
+    float Z = 0.0193339f * r + 0.1191920f * g + 0.9503041f * b;
 
     const float wu = 0.197839825f;
     const float wv = 0.468336303f;
@@ -109,7 +122,7 @@ vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
 }
 
 __attribute__ ((hot, optimize("O3")))
-vector::float4 convert::CIELUV2lRGB(const vector::float4 &in) {
+vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
     const float wu = 0.197839825f;
     const float wv = 0.468336303f;
 
@@ -121,18 +134,18 @@ vector::float4 convert::CIELUV2lRGB(const vector::float4 &in) {
     float x = ( vp_13l > 0.001f ) ? ( 2.25f * y * up_13l / vp_13l ) : 0.0f;
     float z = ( vp_13l > 0.001f ) ? ( y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) / ( 4.0f * vp_13l )) : 0.0f;
 
-	float r =  3.2404542f * x + -1.5371385f * y + -0.4985314f * z;
-	float g = -0.9692660f * x +  1.8760108f * y +  0.0415560f * z;
-	float b =  0.0556434f * x + -0.2040259f * y +  1.0572252f * z;
+    float r =  3.2404542f * x + -1.5371385f * y + -0.4985314f * z;
+    float g = -0.9692660f * x +  1.8760108f * y +  0.0415560f * z;
+    float b =  0.0556434f * x + -0.2040259f * y +  1.0572252f * z;
 
-    return vector::float4(r,g,b);
+    return vector::float4(sRGBTransfer(r),sRGBTransfer(g),sRGBTransfer(b));
 }
 
 __attribute__ ((hot, optimize("O3")))
 void convert::init() {
     float v = 0;
     for (size_t c = 0; c < 256; c++) {
-    	if (v > 0.04045f) {
+        if (v > 0.04045f) {
             sRGB2lRGB[c] = powf( (v + 0.055f) / 1.055f, 2.4f);
         } else {
             sRGB2lRGB[c] = v * ( 1.0f * 12.92f );
