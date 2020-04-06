@@ -24,7 +24,31 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace color {
 
-__attribute__ ((hot, optimize("O3")))
+static float fast_pow2(const float p) {
+    const float offset = (p < 0) ? 1.0f : 0.0f;
+    const float clipp = (p < -126) ? -126.0f : p;
+    const int w = static_cast<int>(clipp);
+    const float z = clipp - w + offset;
+    const union { uint32_t i; float f; } v = {
+        static_cast<uint32_t>((1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z))
+    };
+    return v.f;
+}
+
+static float fast_log2(const float x) {
+    const union { float f; uint32_t i; } vx = { x };
+    const union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFF) | 0x3f000000 };
+    const float y = static_cast<float>(vx.i) * 1.1920928955078125e-7f;
+    return y - 124.22551499f
+             - 1.498030302f * mx.f
+             - 1.72587999f / (0.3520887068f + mx.f);
+}
+
+static float fast_pow(const float x, const float p) {
+    return fast_pow2(p * fast_log2(x));
+}
+
+__attribute__ ((hot, optimize("O3"), flatten))
 void gradient::init(const vector::float4 stops[], size_t n) {
     initialized = true;
     for (size_t c = 0; c < colors_n; c++) {
@@ -46,14 +70,14 @@ void gradient::init(const vector::float4 stops[], size_t n) {
     }
 }
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 vector::float4 gradient::repeat(float i) {
     i = fmodf(i, 1.0f);
     i *= colors_mul;
     return vector::float4::lerp(colors[(static_cast<size_t>(i))&colors_mask], colors[(static_cast<size_t>(i)+1)&colors_mask], fmodf(i, 1.0f));
 }
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 vector::float4 gradient::reflect(float i) {
     i = fabsf(i);
     if ((static_cast<int32_t>(i) & 1) == 0) {
@@ -66,7 +90,7 @@ vector::float4 gradient::reflect(float i) {
     return vector::float4::lerp(colors[(static_cast<size_t>(i))&colors_mask], colors[(static_cast<size_t>(i)+1)&colors_mask], fmodf(i, 1.0f));
 }
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 vector::float4 gradient::clamp(float i) {
     if (i <= 0.0f) {
         return colors[0];
@@ -87,7 +111,7 @@ convert &convert::instance() {
     return c;
 }
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
     float r = sRGB2lRGB[in.r];
     float g = sRGB2lRGB[in.g];
@@ -100,7 +124,7 @@ vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
     const float wu = 0.197839825f;
     const float wv = 0.468336303f;
 
-    float l = ( Y <= 0.008856452f ) ? ( 9.03296296296f * Y) : ( 1.16f * powf(Y, 1.0f / 3.0f ) - 0.16f);
+    float l = ( Y <= 0.008856452f ) ? ( 9.03296296296f * Y) : ( 1.16f * fast_pow(Y, 1.0f / 3.0f) - 0.16f);
     float d = X + 15.f * Y + 3.0f * Z;
     float di = 1.0f / d;
 
@@ -109,7 +133,7 @@ vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
         ( d > 0.001f ) ? ( 13.0f * l * ( ( 9.0f * Y * di ) - wv ) ) : 0.0f);
 }
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
     const float wu = 0.197839825f;
     const float wv = 0.468336303f;
@@ -121,7 +145,7 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
     float Y = ( in.x + 0.16f ) * (1.0f / 1.16f);
     float y = ( in.x <= 0.08f ) ? ( in.x * 0.1107056f ) : ( Y * Y * Y );
     float x = ( vp_13l > 0.001f ) ? ( 2.25f * y * up_13l * vp_13li ) : 0.0f;
-    float z = ( vp_13l > 0.001f ) ? ( y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) * 1.0f / 4.0f * vp_13li ) : 0.0f;
+    float z = ( vp_13l > 0.001f ) ? ( y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) * (1.0f / 4.0f) * vp_13li ) : 0.0f;
 
     float r =  3.2404542f * x + -1.5371385f * y + -0.4985314f * z;
     float g = -0.9692660f * x +  1.8760108f * y +  0.0415560f * z;
@@ -132,8 +156,8 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
             return 0.0f;
         } else if (a < 0.0031308f) {
             return a * 12.92f;
-        } else if ( a < 1.0f ) {
-            return powf(a, 1.0f / 2.4f) * 1.055f - 0.055f;
+        } else if ( a < 0.999982f ) {
+            return fast_pow(a, 1.0f / 2.4f) * 1.055f - 0.055f;
         } else {
             return 1.0f;
         }
@@ -142,12 +166,12 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
     return vector::float4(sRGBTransfer(r),sRGBTransfer(g),sRGBTransfer(b));
 }
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 void convert::init() {
     float v = 0;
     for (size_t c = 0; c < 256; c++) {
         if (v > 0.04045f) {
-            sRGB2lRGB[c] = powf( (v + 0.055f) / 1.055f, 2.4f);
+            sRGB2lRGB[c] = fast_pow( (v + 0.055f) / 1.055f, 2.4f);
         } else {
             sRGB2lRGB[c] = v * ( 1.0f * 12.92f );
         };
