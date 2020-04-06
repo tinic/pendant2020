@@ -69,7 +69,7 @@ file(GLOB_RECURSE STM32_SRC stm32/Src/*.c)
 # LwIP
 set(COMMON_FLAGS "-DPENDANT2020 -DSTM32 -DNVIC_BASE_ADDRESS=${BASE_ADDRESS} -D${STM32ARCH} -D${STM32MCU} \
                   -Wall -Wextra -Wno-error=format -Wno-strict-aliasing -ffast-math \
-                  -ffunction-sections -mthumb -mcpu=${ARM_ARCH} -mfloat-abi=softfp -mfpu=fpv4-sp-d16")
+                  -ffunction-sections -mthumb -mcpu=${ARM_ARCH} -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 
 if(BOOTLOADER)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DBOOTLOADER=1")

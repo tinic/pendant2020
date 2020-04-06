@@ -130,7 +130,7 @@ void Leds::start() {
                 }
             }
 
-        } else {
+        } else { 
             calc_effect(current_effect);
         }
     };

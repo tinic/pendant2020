@@ -30,7 +30,7 @@ void gradient::init(const vector::float4 stops[], size_t n) {
     for (size_t c = 0; c < colors_n; c++) {
         float f = static_cast<float>(c) / static_cast<float>(colors_n - 1); 
         vector::float4 a = stops[0];
-        vector::float4 b = stops[1];
+        vector::float4 b = stops[1]; 
         if (n > 2) {
             for (int32_t d = static_cast<int32_t>(n-2); d >= 0 ; d--) {
                 if ( f >= (stops[d].w) ) {
