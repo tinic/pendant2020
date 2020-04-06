@@ -102,10 +102,11 @@ vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
 
     float l = ( Y <= 0.008856452f ) ? ( 9.03296296296f * Y) : ( 1.16f * powf(Y, 1.0f / 3.0f ) - 0.16f);
     float d = X + 15.f * Y + 3.0f * Z;
+    float di = 1.0f / d;
 
     return vector::float4(l,
-        ( d > 0.001f ) ? ( 13.0f * l * ( ( 4.0f * X / d ) - wu ) ) : 0.0f,
-        ( d > 0.001f ) ? ( 13.0f * l * ( ( 9.0f * Y / d ) - wv ) ) : 0.0f);
+        ( d > 0.001f ) ? ( 13.0f * l * ( ( 4.0f * X * di ) - wu ) ) : 0.0f,
+        ( d > 0.001f ) ? ( 13.0f * l * ( ( 9.0f * Y * di ) - wv ) ) : 0.0f);
 }
 
 __attribute__ ((hot, optimize("O3")))
@@ -115,11 +116,12 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
 
     float up_13l = in.y + wu * (13.0f * in.x);
     float vp_13l = in.z + wv * (13.0f * in.x);
+    float vp_13li = 1.0f / vp_13l;
     
     float Y = ( in.x + 0.16f ) * (1.0f / 1.16f);
     float y = ( in.x <= 0.08f ) ? ( in.x * 0.1107056f ) : ( Y * Y * Y );
-    float x = ( vp_13l > 0.001f ) ? ( 2.25f * y * up_13l / vp_13l ) : 0.0f;
-    float z = ( vp_13l > 0.001f ) ? ( y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) / ( 4.0f * vp_13l )) : 0.0f;
+    float x = ( vp_13l > 0.001f ) ? ( 2.25f * y * up_13l * vp_13li ) : 0.0f;
+    float z = ( vp_13l > 0.001f ) ? ( y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) * 1.0f / 4.0f * vp_13li ) : 0.0f;
 
     float r =  3.2404542f * x + -1.5371385f * y + -0.4985314f * z;
     float g = -0.9692660f * x +  1.8760108f * y +  0.0415560f * z;
@@ -131,7 +133,7 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
         } else if (a < 0.0031308f) {
             return a * 12.92f;
         } else if ( a < 1.0f ) {
-            return powf(a, 1.0f/2.4f) * 1.055f - 0.055f;
+            return powf(a, 1.0f / 2.4f) * 1.055f - 0.055f;
         } else {
             return 1.0f;
         }
