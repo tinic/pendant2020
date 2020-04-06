@@ -145,7 +145,7 @@ void Leds::start() {
 }
 
 
-__attribute__ ((hot, optimize("O3")))
+__attribute__ ((hot, optimize("O3"), flatten))
 void Leds::commit() {
     constexpr size_t preamble_len = 256;
     constexpr size_t array_len = Leds::led_n * 3 * 16 + preamble_len;

@@ -30,7 +30,7 @@ void gradient::init(const vector::float4 stops[], size_t n) {
     for (size_t c = 0; c < colors_n; c++) {
         float f = static_cast<float>(c) / static_cast<float>(colors_n - 1); 
         vector::float4 a = stops[0];
-        vector::float4 b = stops[1]; 
+        vector::float4 b = stops[1];
         if (n > 2) {
             for (int32_t d = static_cast<int32_t>(n-2); d >= 0 ; d--) {
                 if ( f >= (stops[d].w) ) {
@@ -88,19 +88,6 @@ convert &convert::instance() {
 }
 
 __attribute__ ((hot, optimize("O3")))
-static float sRGBTransfer(float a) {
-    if (a <= 0.0f) {
-        return 0.0f;
-    } else if (a < 0.0031308f) {
-        return a * 12.92f;
-    } else if ( a < 1.0f ) {
-        return powf(a, 1.0f/2.4f) * 1.055f - 0.055f;
-    } else {
-        return 1.0f;
-    }
-}
-
-__attribute__ ((hot, optimize("O3")))
 vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
     float r = sRGB2lRGB[in.r];
     float g = sRGB2lRGB[in.g];
@@ -137,6 +124,18 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
     float r =  3.2404542f * x + -1.5371385f * y + -0.4985314f * z;
     float g = -0.9692660f * x +  1.8760108f * y +  0.0415560f * z;
     float b =  0.0556434f * x + -0.2040259f * y +  1.0572252f * z;
+
+    auto sRGBTransfer = [] (float a) {
+        if (a <= 0.0f) {
+            return 0.0f;
+        } else if (a < 0.0031308f) {
+            return a * 12.92f;
+        } else if ( a < 1.0f ) {
+            return powf(a, 1.0f/2.4f) * 1.055f - 0.055f;
+        } else {
+            return 1.0f;
+        }
+    };
 
     return vector::float4(sRGBTransfer(r),sRGBTransfer(g),sRGBTransfer(b));
 }
