@@ -82,7 +82,7 @@ void Leds::init() {
 }
 
 void Leds::black() {
-    memset(leds, 0, sizeof(leds));
+    std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, vector::float4());
 }
 
 void Leds::start() {
@@ -117,14 +117,14 @@ void Leds::start() {
         if ((now - switch_time) < blend_duration) {
             calc_effect(previous_effect);
 
-            vector::float4 leds_prev[2][Leds::led_n];
-            memcpy(leds_prev, leds, sizeof(leds));
+            multi_array<vector::float4, face_n, led_n> leds_prev;
+            std::copy(&leds_prev[0][0], &leds_prev[0][0] + face_n * led_n, &leds[0][0]);
 
             calc_effect(current_effect);
 
             float blend = static_cast<float>(now - switch_time) * (1.0f / static_cast<float>(blend_duration));
 
-            for (size_t d = 0; d < 2; d++) {
+            for (size_t d = 0; d < face_n; d++) {
                 for (size_t c = 0; c < Leds::led_n; c++) {
                     leds[d][c] = vector::float4::lerp(leds_prev[d][c], leds[d][c], blend);
                 }

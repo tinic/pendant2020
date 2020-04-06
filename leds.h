@@ -27,8 +27,22 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <array>
 
+template <typename T, std::size_t n, std::size_t... ns>
+struct multi_array_ {
+    using type = std::array<typename multi_array_<T, ns...>::type, n>;
+};
+
+template <typename T, std::size_t n>
+struct multi_array_<T, n> {
+    using type = std::array<T, n>;
+};
+
+template <typename T, std::size_t... ns>
+using multi_array = typename multi_array_<T, ns...>::type;
+
 class Leds {
 public:
+    static constexpr size_t face_n = 2;
     static constexpr size_t led_n = 24;
 
     static Leds &instance();
@@ -41,7 +55,7 @@ public:
 private:
     void commit();
 
-    vector::float4 leds[2][led_n];
+    multi_array<vector::float4, face_n, led_n> leds;
 
     bool initialized = false;
     void init();
