@@ -32,6 +32,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "main.h"
 
+extern "C" TIM_HandleTypeDef htim2;
+extern "C" IWDG_HandleTypeDef hiwdg;
+
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     switch(GPIO_Pin) {
         case SWITCH1_Pin: {
@@ -97,8 +100,31 @@ void Pendant::init() {
 }
 
 void Pendant::Run() {
+    HAL_TIM_Base_Start_IT(&htim2);
     while (1) {
         __WFI();
+
+        HAL_IWDG_Refresh(&hiwdg);
+
+        static double effecttime = 0.0f;
+        if ( ( Model::instance().Time() - effecttime ) >= (1.0 / 60.0)) {
+            effecttime = Model::instance().Time();
+            Timeline::instance().ProcessEffect();
+            if (Timeline::instance().TopEffect().Valid()) {
+                Timeline::instance().TopEffect().Calc();
+                Timeline::instance().TopEffect().Commit();
+            }
+        }
+
+        static double displaytime = 0.0f;
+        if ( ( Model::instance().Time() - displaytime ) >= (1.0 / 30.0)) {
+            displaytime = Model::instance().Time();
+            Timeline::instance().ProcessDisplay();
+            if (Timeline::instance().TopDisplay().Valid()) {
+                Timeline::instance().TopDisplay().Calc();
+                Timeline::instance().TopDisplay().Commit();
+            }
+        }
     }
 }
 

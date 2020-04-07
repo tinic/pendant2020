@@ -17,7 +17,7 @@
       {
         "label": "Pendant2020: Install Bootloader",
         "type": "shell",
-        "command": "openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c 'program pendant2020_bootloader.bin 0x08000000 verify reset exit'",
+        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_bootloader.bin 0x08000000 verify reset exit'",
         "options": {
           "cwd": "${workspaceRoot}/build_bootloader"
         },
@@ -29,12 +29,24 @@
       {
         "label": "Pendant2020: Install Firmware",
         "type": "shell",
-        "command": "openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c 'program pendant2020_bootloaded.bin 0x08008000 verify reset exit'",
+        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_bootloaded.bin 0x08008000 verify reset exit'",
         "options": {
           "cwd": "${workspaceRoot}/build_bootloaded"
         },
         "dependsOn": [
           "Pendant2020: Build Firmware"
+        ],
+        "problemMatcher": []
+      },
+      {
+        "label": "Pendant2020: Install Debug",
+        "type": "shell",
+        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_debugging.bin 0x08000000 verify reset exit'",
+        "options": {
+          "cwd": "${workspaceRoot}/build_debugging"
+        },
+        "dependsOn": [
+          "Pendant2020: Build Debug"
         ],
         "problemMatcher": []
       },
@@ -55,6 +67,17 @@
         "command": "ninja clean",
         "options": {
           "cwd": "${workspaceRoot}/build_bootloader"
+        },
+        "problemMatcher": [
+          "$gcc"
+        ]
+      },
+      {
+        "label": "Pendant2020: Clean Debug",
+        "type": "shell",
+        "command": "ninja clean",
+        "options": {
+          "cwd": "${workspaceRoot}/build_debugging"
         },
         "problemMatcher": [
           "$gcc"
@@ -105,6 +128,42 @@
         "command": "cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE='../arm-gcc-toolchain.cmake' -DCMAKE_BUILD_TYPE=Release -DBOOTLOADED=1 ./..",
         "options": {
           "cwd": "${workspaceRoot}/build_bootloaded",
+          "INCLUDE": "${config:arm-none-eabi.include}",
+          "LIB": "${config:arm-none-eabi.lib}"
+        },
+        "osx": {
+          "options": {
+            "env": {
+              "PATH": "${config:arm-none-eabi.bin}:${env:PATH}"
+            }
+          }
+        },
+        "linux": {
+          "options": {
+            "env": {
+              "PATH": "${config:arm-none-eabi.bin}:${env:PATH}"
+            }
+          }
+        },
+        "windows": {
+          "options": {
+            "env": {
+              "PATH": "${config:arm-none-eabi.bin};${env:PATH}"
+            }
+          }
+        },
+        "group": "build",
+        "problemMatcher": "$gcc"
+      },
+      {
+        "label": "Pendant2020: Pre-Build Debug",
+        "type": "shell",
+        "dependsOn": [
+          "Pendant2020: Create Debug Build Directory"
+        ],
+        "command": "cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE='../arm-gcc-toolchain.cmake' -DCMAKE_BUILD_TYPE=Debug ./..",
+        "options": {
+          "cwd": "${workspaceRoot}/build_debugging",
           "INCLUDE": "${config:arm-none-eabi.include}",
           "LIB": "${config:arm-none-eabi.lib}"
         },
@@ -211,6 +270,45 @@
         ]
       },
       {
+        "label": "Pendant2020: Build Debug",
+        "type": "shell",
+        "command": "ninja",
+        "dependsOn": [
+          "Pendant2020: Pre-Build Debug"
+        ],
+        "options": {
+          "cwd": "${workspaceRoot}/build_debugging"
+        },
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "osx": {
+          "options": {
+            "env": {
+              "PATH": "${config:arm-none-eabi.bin}:${env:PATH}"
+            }
+          }
+        },
+        "linux": {
+          "options": {
+            "env": {
+              "PATH": "${config:arm-none-eabi.bin}:${env:PATH}"
+            }
+          }
+        },
+        "windows": {
+          "options": {
+            "env": {
+              "PATH": "${config:arm-none-eabi.bin};${env:PATH}"
+            }
+          }
+        },
+        "problemMatcher": [
+          "$gcc"
+        ]
+      },
+      {
         "label": "Pendant2020: Create Bootloader Build Directory",
         "type": "shell",
         "linux": {
@@ -230,6 +328,17 @@
         "windows": {
             "command": "cmd",
             "args": ["/C", "if not exist ${workspaceRoot}\\build_bootloaded mkdir ${workspaceRoot}\\build_bootloaded"]
+        }
+      },
+      {
+        "label": "Pendant2020: Create Firmware Debug Directory",
+        "type": "shell",
+        "linux": {
+            "command": "mkdir -p ${workspaceRoot}/build_debugging"
+        },
+        "windows": {
+            "command": "cmd",
+            "args": ["/C", "if not exist ${workspaceRoot}\\build_debugging mkdir ${workspaceRoot}\\build_debugging"]
         }
       }
     ]

@@ -82,10 +82,17 @@ void Leds::init() {
 }
 
 void Leds::black() {
-    std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, vector::float4());
+    std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, 
+        vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xFF,0xFF,0xFF))));
 }
 
+extern "C" void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
+
 void Leds::start() {
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+    HAL_SPI_TxCpltCallback(&hspi1);
+    HAL_SPI_TxCpltCallback(&hspi2);
+
     static Timeline::Span span;
 
     static uint32_t current_effect = 0;
@@ -144,7 +151,6 @@ void Leds::start() {
     switch_time = Model::instance().Time();
 }
 
-
 __attribute__ ((hot, optimize("O3"), flatten))
 void Leds::commit() {
     constexpr size_t preamble_len = 256;
@@ -184,7 +190,10 @@ void Leds::commit() {
         ptr1 = convert_to_one_wire(ptr1, (pixel1.b >> 8) & 0xFF);
         ptr1 = convert_to_one_wire(ptr1, (pixel1.b >> 8) & 0xFF);
     }
-    
+
+    HAL_SPI_DMAStop(&hspi1);
+    HAL_SPI_DMAStop(&hspi2);
+
     HAL_SPI_Transmit_DMA(&hspi1, reinterpret_cast<uint8_t *>(&ws2816buf[0][0]), array_len * sizeof(uint32_t));
     HAL_SPI_Transmit_DMA(&hspi2, reinterpret_cast<uint8_t *>(&ws2816buf[1][0]), array_len * sizeof(uint32_t));
 }

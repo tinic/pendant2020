@@ -5,14 +5,14 @@
             "type": "cortex-debug",
             "request": "launch",
             "servertype": "openocd",
-            "cwd": "${workspaceRoot}/build_bootloaded",
-            "executable": "pendant2020_bootloaded.elf",
+            "cwd": "${workspaceRoot}/build_debugging",
+            "executable": "pendant2020_debugging.elf",
             "name": "Debug (OpenOCD)",
             "device": "STM32F401CC",
             "interface": "swd",
             "configFiles": [
                 "interface/stlink.cfg",
-                "target/stm32f1x.cfg"
+                "target/stm32f4x.cfg"
             ]
         }
     ]

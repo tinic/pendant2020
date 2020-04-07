@@ -27,28 +27,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "stm32f401xc.h"
 #include "stm32f4xx_hal.h"
 
-extern "C" TIM_HandleTypeDef htim1;
-extern "C" IWDG_HandleTypeDef hiwdg;
+extern "C" TIM_HandleTypeDef htim2;
 
-extern "C" void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim) {
-    if (htim == &htim1) {
-        HAL_IWDG_Refresh(&hiwdg);
-
-        double nowtime = system_time();
-
-        Model::instance().SetTime(nowtime);
-    
-        static double effecttime = 0.0f;
-        if ( ( nowtime - effecttime ) >= (1.0 / 60.0)) {
-            effecttime = nowtime;
-            Timeline::instance().ProcessEffect();
-        }
-
-        static double displaytime = 0.0f;
-        if ( ( nowtime - displaytime ) >= (1.0 / 30.0)) {
-            displaytime = nowtime;
-            Timeline::instance().ProcessDisplay();
-        }
+extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim == &htim2) {
+        Model::instance().SetTime(system_time());
     }
 }
 
