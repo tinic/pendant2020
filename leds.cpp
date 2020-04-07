@@ -83,7 +83,7 @@ void Leds::init() {
 
 void Leds::black() {
     std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, 
-        vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xFF,0xFF,0xFF))));
+        vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(1,1,1))));
 }
 
 extern "C" void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
