@@ -24,30 +24,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace color {
 
-static float fast_pow2(const float p) {
-    const float offset = (p < 0) ? 1.0f : 0.0f;
-    const float clipp = (p < -126) ? -126.0f : p;
-    const int w = static_cast<int>(clipp);
-    const float z = clipp - w + offset;
-    const union { uint32_t i; float f; } v = {
-        static_cast<uint32_t>((1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z))
-    };
-    return v.f;
-}
-
-static float fast_log2(const float x) {
-    const union { float f; uint32_t i; } vx = { x };
-    const union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFF) | 0x3f000000 };
-    const float y = static_cast<float>(vx.i) * 1.1920928955078125e-7f;
-    return y - 124.22551499f
-             - 1.498030302f * mx.f
-             - 1.72587999f / (0.3520887068f + mx.f);
-}
-
-static float fast_pow(const float x, const float p) {
-    return fast_pow2(p * fast_log2(x));
-}
-
 __attribute__ ((hot, optimize("O3"), flatten))
 vector::float4 gradient::repeat(float i) const {
     i = fmodf(i, 1.0f);
@@ -78,6 +54,30 @@ vector::float4 gradient::clamp(float i) const {
     }
     i *= colors_mul;
     return vector::float4::lerp(colors[(static_cast<size_t>(i))&colors_mask], colors[(static_cast<size_t>(i)+1)&colors_mask], fmodf(i, 1.0f));
+}
+
+static float fast_exp2(const float p) {
+    const float offset = (p < 0) ? 1.0f : 0.0f;
+    const float clipp = (p < -126) ? -126.0f : p;
+    const int w = static_cast<int>(clipp);
+    const float z = clipp - w + offset;
+    const union { uint32_t i; float f; } v = {
+        static_cast<uint32_t>((1 << 23) * (clipp + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z))
+    };
+    return v.f;
+}
+
+static float fast_log2(const float x) {
+    const union { float f; uint32_t i; } vx = { x };
+    const union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFF) | 0x3f000000 };
+    const float y = static_cast<float>(vx.i) * 1.1920928955078125e-7f;
+    return y - 124.22551499f
+             - 1.498030302f * mx.f
+             - 1.72587999f / (0.3520887068f + mx.f);
+}
+
+static float fast_pow(const float x, const float p) {
+    return fast_exp2(p * fast_log2(x));
 }
 
 __attribute__ ((hot, optimize("O3"), flatten))
