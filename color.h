@@ -40,35 +40,35 @@ namespace color {
         T b;
         T a;
 
-        rgba() :
+        constexpr rgba() :
             r(0),
             g(0),
             b(0),
             a(0){
         }
     
-        rgba(const rgba &from) :
+        constexpr rgba(const rgba &from) :
             r(from.r),
             g(from.g),
             b(from.b),
             a(from.a) {
         }
 
-        explicit rgba(T _r, T _g, T _b) :
+        constexpr explicit rgba(T _r, T _g, T _b) :
             r(_r),
             g(_g),
             b(_b),
             a(0) {
         }
 
-        explicit rgba(T _r, T _g, T _b, T _a) :
+        constexpr explicit rgba(T _r, T _g, T _b, T _a) :
             r(_r),
             g(_g),
             b(_b),
             a(_a) {
         }
 
-        explicit rgba(const vector::float4 &from) {
+        constexpr explicit rgba(const vector::float4 &from) {
             r = clamp_to_type(from.x);
             g = clamp_to_type(from.y);
             b = clamp_to_type(from.z);
@@ -124,32 +124,80 @@ namespace color {
 
     class gradient {
     public:
-        void init(const vector::float4 stops[], size_t n);
-        bool check_init() const { return !initialized; }
+        constexpr gradient(const vector::float4 stops[], const size_t n) {
+            for (size_t c = 0; c < colors_n; c++) {
+                float f = static_cast<float>(c) / static_cast<float>(colors_n - 1); 
+                vector::float4 a = stops[0];
+                vector::float4 b = stops[1];
+                if (n > 2) {
+                    for (int32_t d = static_cast<int32_t>(n-2); d >= 0 ; d--) {
+                        if ( f >= (stops[d].w) ) {
+                            a = stops[d+0];
+                            b = stops[d+1];
+                            break;
+                        }
+                    }
+                }
+                f -= a.w;
+                f /= b.w - a.w;
+                colors[c] = a.lerp(b,f);
+            }
+        }
 
-        vector::float4 repeat(float i);
-        vector::float4 reflect(float i);
-        vector::float4 clamp(float i);
+        vector::float4 repeat(float i) const;
+        vector::float4 reflect(float i) const;
+        vector::float4 clamp(float i) const;
 
     private:
         static constexpr size_t colors_n = 256;
         static constexpr float colors_mul = 255.0;
         static constexpr size_t colors_mask = 0xFF;
+
         vector::float4 colors[colors_n];
-        bool initialized = false;
     };
 
     class convert {
     public:
-        static convert &instance();
+        constexpr float constexpr_pow(const float x, const float p) const {
+            return ::exp2f(p * ::log2f(x));
+        }
 
-        vector::float4 sRGB2CIELUV(const rgba<uint8_t> &);
-        vector::float4 CIELUV2sRGB(const vector::float4 &);
+        constexpr convert() : sRGB2lRGB() {
+            for (size_t c = 0; c < 256; c++) {
+                float v = float(c) / 256.0f;
+                if (v > 0.04045f) {
+                    sRGB2lRGB[c] = constexpr_pow( (v + 0.055f) / 1.055f, 2.4f);
+                } else {
+                    sRGB2lRGB[c] = v * ( 25.0f / 323.0f );
+                };
+            }
+        }
+
+        constexpr vector::float4 sRGB2CIELUV(const rgba<uint8_t> &in) const  {
+            float r = sRGB2lRGB[in.r];
+            float g = sRGB2lRGB[in.g];
+            float b = sRGB2lRGB[in.b];
+
+            float X = 0.4124564f * r + 0.3575761f * g + 0.1804375f * b;
+            float Y = 0.2126729f * r + 0.7151522f * g + 0.0721750f * b;
+            float Z = 0.0193339f * r + 0.1191920f * g + 0.9503041f * b;
+
+            const float wu = 0.197839825f;
+            const float wv = 0.468336303f;
+
+            float l = ( Y <= 0.008856452f ) ? ( 9.03296296296f * Y) : ( 1.16f * constexpr_pow(Y, 1.0f / 3.0f) - 0.16f);
+            float d = X + 15.f * Y + 3.0f * Z;
+            float di = 1.0f / d;
+
+            return vector::float4(l,
+                (d > (1.0f / 65536.0f)) ? 13.0f * l * ( ( 4.0f * X * di ) - wu ) : 0.0f,
+                (d > (1.0f / 65536.0f)) ? 13.0f * l * ( ( 9.0f * Y * di ) - wv ) : 0.0f);
+        }
+
+        vector::float4 CIELUV2sRGB(const vector::float4 &) const;
 
     private:
-        bool initialized = false;
-        void init();
-        std::array<float, 256> sRGB2lRGB;
+        float sRGB2lRGB[256];
     };
 
 }
