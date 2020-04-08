@@ -164,7 +164,7 @@ namespace color {
 
         constexpr convert() : sRGB2lRGB() {
             for (size_t c = 0; c < 256; c++) {
-                float v = float(c) / 256.0f;
+                float v = float(c) / 255.0f;
                 if (v > 0.04045f) {
                     sRGB2lRGB[c] = constexpr_pow( (v + 0.055f) / 1.055f, 2.4f);
                 } else {
