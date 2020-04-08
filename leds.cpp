@@ -145,12 +145,10 @@ void Leds::color_walker() {
     }
 }
 
-extern "C" void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
-
 void Leds::start() {
+
+    // Turn on LED Mosfet
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
-    HAL_SPI_TxCpltCallback(&hspi1);
-    HAL_SPI_TxCpltCallback(&hspi2);
 
     static Timeline::Span span;
 
