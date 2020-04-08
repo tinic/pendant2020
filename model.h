@@ -99,7 +99,7 @@ public:
 
 private:
 
-    uint32_t effect = 0;
+    uint32_t effect = 1;
 
     float brightness = 1.0f;
 

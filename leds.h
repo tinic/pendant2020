@@ -44,13 +44,20 @@ class Leds {
 public:
     static constexpr size_t face_n = 2;
     static constexpr size_t led_n = 24;
+    static constexpr size_t led_outer_n = 16;
+    static constexpr size_t led_inner_n = 8;
 
     static Leds &instance();
     
     void black();
+    void color_walker();
     void start();
 
+    void set_inner_flat(const vector::float4 &col);
+    void set_outer_flat(const vector::float4 &col);
+
     const std::array<vector::float4, Leds::led_n> &pos();
+    const std::array<vector::float4, Leds::led_inner_n> &pos_inner();
 
 private:
     void commit();

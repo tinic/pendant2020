@@ -80,14 +80,14 @@ endif(BOOTLOADER)
 set(CMAKE_ASM_FLAGS "-mcpu=${ARM_ARCH}")
 
 set(CMAKE_C_FLAGS "${COMMON_FLAGS} -Wno-unused-parameter -std=gnu99")
-set(CMAKE_C_FLAGS_RELEASE "-flto -Wl,-flto -Os")
+set(CMAKE_C_FLAGS_RELEASE "-Os")
 set(CMAKE_C_FLAGS_DEBUG "-Og -g3")
 
 set(CMAKE_CXX_FLAGS "${COMMON_FLAGS} -Wall -Wextra \
     -Wno-strict-aliasing -Wdouble-promotion \
     -Wshadow -Wfloat-conversion -Wnull-dereference \
     -Wformat=2 -std=c++17 -fno-rtti -fno-exceptions")
-set(CMAKE_CXX_FLAGS_RELEASE "-flto -Wl,-flto -Os")
+set(CMAKE_CXX_FLAGS_RELEASE "-Os")
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g3")
 
 set(CMAKE_EXE_LINKER_FLAGS "${COMMON_FLAGS} -g3 --specs=nosys.specs \

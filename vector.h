@@ -43,6 +43,13 @@ namespace vector {
             this->w = 0.0f;
         }
 
+        float4(const float4 &v, float a) {
+            this->x = v.x;
+            this->y = v.y;
+            this->z = v.z;
+            this->w = a;
+        }
+
         float4(uint32_t c, float a) {
             this->x = ((c>>16)&0xFF)*(1.0f/255.0f);
             this->y = ((c>> 8)&0xFF)*(1.0f/255.0f);
