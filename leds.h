@@ -50,7 +50,7 @@ public:
     static Leds &instance();
     
     void nothing();
-    void color_walker();
+    void rainbow();
     void start();
 
     void set_inner_flat(const vector::float4 &col);

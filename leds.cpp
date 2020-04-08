@@ -33,7 +33,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 extern "C" SPI_HandleTypeDef hspi1;
 extern "C" SPI_HandleTypeDef hspi2;
 
-static constexpr color::gradient rainbow((const vector::float4[7]){
+static constexpr color::gradient gradient_rainbow((const vector::float4[7]){
     vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0x00)), 0.00f),
     vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xff,0x00)), 0.16f),
     vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0xff,0x00)), 0.33f),
@@ -41,6 +41,11 @@ static constexpr color::gradient rainbow((const vector::float4[7]){
     vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0x00,0xff)), 0.66f),
     vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0xff)), 0.83f),
     vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0x00)), 1.00f)},7);
+
+static constexpr color::gradient gradient_sunset((const vector::float4[4]){
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x3f,0x3f)), 0.00f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0xcf,0xff)), 0.50f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x3f,0x3f)), 1.00f)},3);
 
 static constexpr vector::float4 duck_yellow(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xcc,0x00)));
 static constexpr vector::float4 white(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xff,0xff)));
@@ -119,15 +124,15 @@ void Leds::nothing() {
     std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, black);
 }
 
-void Leds::color_walker() {
+void Leds::rainbow() {
     double now = Model::instance().Time();
 
     const double speed = 0.25f;
 
     float val_walk = (1.0f - static_cast<float>(fmodf(static_cast<float>(now * speed), 1.0)));
 
-    float inner_b = 0.20f * (sinf(static_cast<float>(now) * .5f)+1.0f);
-    float outer_b = 0.01f * (sinf(static_cast<float>(now) * .5f)+1.0f);
+    float inner_b = 0.20f;
+    float outer_b = 0.01f;
 
     for (size_t c = 0; c < led_inner_n; c++) {
         vector::float4 p = pos_inner()[c];
@@ -138,7 +143,7 @@ void Leds::color_walker() {
     for (size_t c = 0; c < led_outer_n; c++) {
         float mod_walk = val_walk + (1.0f - (c * ( 1.0f / static_cast<float>(led_outer_n) ) ) );
         
-        vector::float4 out = rainbow.repeat(mod_walk) * outer_b;
+        vector::float4 out = gradient_rainbow.repeat(mod_walk) * outer_b;
 
         leds[0][c] = out;
         leds[1][c] = out;
@@ -173,7 +178,7 @@ void Leds::start() {
                 nothing();
                 break;
                 case 1:
-                color_walker();
+                rainbow();
                 break;
             }
         };
