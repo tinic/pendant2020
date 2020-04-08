@@ -49,7 +49,7 @@ public:
 
     static Leds &instance();
     
-    void black();
+    void nothing();
     void color_walker();
     void start();
 

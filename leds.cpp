@@ -33,6 +33,19 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 extern "C" SPI_HandleTypeDef hspi1;
 extern "C" SPI_HandleTypeDef hspi2;
 
+static constexpr color::gradient rainbow((const vector::float4[7]){
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0x00)), 0.00f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xff,0x00)), 0.16f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0xff,0x00)), 0.33f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0xff,0xff)), 0.50f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0x00,0xff)), 0.66f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0xff)), 0.83f),
+    vector::float4(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0x00)), 1.00f)},7);
+
+static constexpr vector::float4 duck_yellow(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xcc,0x00)));
+static constexpr vector::float4 white(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xff,0xff)));
+static constexpr vector::float4 black(color::convert().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0x00,0x00)));
+
 Leds &Leds::instance() {
     static Leds leds;
     if (!leds.initialized) {
@@ -43,61 +56,53 @@ Leds &Leds::instance() {
 }
 
 const std::array<vector::float4, Leds::led_n> &Leds::pos() {
-    static std::array<vector::float4, Leds::led_n> leds_pos;
-    static bool init = false;
-    if (!init) {
-        init = true;
+    static constexpr std::array<vector::float4, Leds::led_n> leds_pos = {
         // outer
-        leds_pos[ 0] = vector::float4(-0.00000000f,+1.00000000f,+0.00000000f,+0.00000000f);
-        leds_pos[ 1] = vector::float4(+0.38268343f,+0.92387953f,+0.00000000f,+0.00000000f);
-        leds_pos[ 2] = vector::float4(+0.70710678f,+0.70710678f,+0.00000000f,+0.00000000f);
-        leds_pos[ 3] = vector::float4(+0.92387953f,+0.38268343f,+0.00000000f,+0.00000000f);
-        leds_pos[ 4] = vector::float4(+1.00000000f,+0.00000000f,+0.00000000f,+0.00000000f);
-        leds_pos[ 5] = vector::float4(+0.92387953f,-0.38268343f,+0.00000000f,+0.00000000f);
-        leds_pos[ 6] = vector::float4(+0.70710678f,-0.70710678f,+0.00000000f,+0.00000000f);
-        leds_pos[ 7] = vector::float4(+0.38268343f,-0.92387953f,+0.00000000f,+0.00000000f);
-        leds_pos[ 8] = vector::float4(+0.00000000f,-1.00000000f,+0.00000000f,+0.00000000f);
-        leds_pos[ 9] = vector::float4(-0.38268343f,-0.92387953f,+0.00000000f,+0.00000000f);
-        leds_pos[10] = vector::float4(-0.70710678f,-0.70710678f,+0.00000000f,+0.00000000f);
-        leds_pos[11] = vector::float4(-0.92387953f,-0.38268343f,+0.00000000f,+0.00000000f);
-        leds_pos[12] = vector::float4(-1.00000000f,-0.00000000f,+0.00000000f,+0.00000000f);
-        leds_pos[13] = vector::float4(-0.92387953f,+0.38268343f,+0.00000000f,+0.00000000f);
-        leds_pos[14] = vector::float4(-0.70710678f,+0.70710678f,+0.00000000f,+0.00000000f);
-        leds_pos[15] = vector::float4(-0.38268343f,+0.92387953f,+0.00000000f,+0.00000000f);
+        vector::float4(-0.00000000f,+1.00000000f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.38268343f,+0.92387953f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.70710678f,+0.70710678f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.92387953f,+0.38268343f,+0.00000000f,+0.00000000f),
+        vector::float4(+1.00000000f,+0.00000000f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.92387953f,-0.38268343f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.70710678f,-0.70710678f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.38268343f,-0.92387953f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f,-1.00000000f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.38268343f,-0.92387953f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.70710678f,-0.70710678f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.92387953f,-0.38268343f,+0.00000000f,+0.00000000f),
+        vector::float4(-1.00000000f,-0.00000000f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.92387953f,+0.38268343f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.70710678f,+0.70710678f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.38268343f,+0.92387953f,+0.00000000f,+0.00000000f),
         // inner
-        leds_pos[16] = vector::float4(+0.00000000f,+0.50000000f,+0.00000000f,+0.00000000f);
-        leds_pos[17] = vector::float4(-0.45833333f,+0.20833333f,+0.00000000f,+0.00000000f);
-        leds_pos[18] = vector::float4(-0.29166666f,+0.00000000f,+0.00000000f,+0.00000000f);
-        leds_pos[19] = vector::float4(+0.00000000f,+0.00000000f,+0.00000000f,+0.00000000f);
-        leds_pos[20] = vector::float4(+0.00000000f,-0.66666666f,+0.00000000f,+0.00000000f);
-        leds_pos[21] = vector::float4(+0.00000000f,-0.33333333f,+0.00000000f,+0.00000000f);
-        leds_pos[22] = vector::float4(+0.45833333f,-0.20833333f,+0.00000000f,+0.00000000f);
-        leds_pos[23] = vector::float4(+0.29166666f,-0.00000000f,+0.00000000f,+0.00000000f);
-    }
+        vector::float4(+0.00000000f,+0.50000000f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.45833333f,+0.20833333f,+0.00000000f,+0.00000000f),
+        vector::float4(-0.29166666f,+0.00000000f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f,+0.00000000f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f,-0.66666666f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f,-0.33333333f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.45833333f,-0.20833333f,+0.00000000f,+0.00000000f),
+        vector::float4(+0.29166666f,-0.00000000f,+0.00000000f,+0.00000000f)};
     return leds_pos;
 }
 
 const std::array<vector::float4, Leds::led_inner_n> &Leds::pos_inner() {
-    static std::array<vector::float4, Leds::led_inner_n> leds_pos;
-    static bool init = false;
-    if (!init) {
-        init = true;
-        // inner
-        const float e = 1.5f;
-        leds_pos[0] = vector::float4(+0.00000000f*e,+0.50000000f*e,+0.00000000f,+0.00000000f);
-        leds_pos[1] = vector::float4(-0.45833333f*e,+0.20833333f*e,+0.00000000f,+0.00000000f);
-        leds_pos[2] = vector::float4(-0.29166666f*e,+0.00000000f*e,+0.00000000f,+0.00000000f);
-        leds_pos[3] = vector::float4(+0.00000000f*e,+0.00000000f*e,+0.00000000f,+0.00000000f);
-        leds_pos[4] = vector::float4(+0.00000000f*e,-0.66666666f*e,+0.00000000f,+0.00000000f);
-        leds_pos[5] = vector::float4(+0.00000000f*e,-0.33333333f*e,+0.00000000f,+0.00000000f);
-        leds_pos[6] = vector::float4(+0.45833333f*e,-0.20833333f*e,+0.00000000f,+0.00000000f);
-        leds_pos[7] = vector::float4(+0.29166666f*e,-0.00000000f*e,+0.00000000f,+0.00000000f);
-    }
+    constexpr float e = 1.5f;
+    static constexpr std::array<vector::float4, Leds::led_inner_n> leds_pos = {
+        vector::float4(+0.00000000f*e,+0.50000000f*e,+0.00000000f,+0.00000000f),
+        vector::float4(-0.45833333f*e,+0.20833333f*e,+0.00000000f,+0.00000000f),
+        vector::float4(-0.29166666f*e,+0.00000000f*e,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f*e,+0.00000000f*e,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f*e,-0.66666666f*e,+0.00000000f,+0.00000000f),
+        vector::float4(+0.00000000f*e,-0.33333333f*e,+0.00000000f,+0.00000000f),
+        vector::float4(+0.45833333f*e,-0.20833333f*e,+0.00000000f,+0.00000000f),
+        vector::float4(+0.29166666f*e,-0.00000000f*e,+0.00000000f,+0.00000000f)
+    };
     return leds_pos;
 }
 
 void Leds::init() {
-    black();
+    nothing();
 }
 
 void Leds::set_inner_flat(const vector::float4 &col) {
@@ -110,9 +115,8 @@ void Leds::set_outer_flat(const vector::float4 &col) {
     std::fill(&leds[1][0], &leds[1][0] + led_outer_n, col);
 }
 
-void Leds::black() {
-    std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, 
-        vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(1,1,1))));
+void Leds::nothing() {
+    std::fill(&leds[0][0], &leds[0][0] + face_n * led_n, black);
 }
 
 void Leds::color_walker() {
@@ -122,34 +126,19 @@ void Leds::color_walker() {
 
     float val_walk = (1.0f - static_cast<float>(fmodf(static_cast<float>(now * speed), 1.0)));
 
-    static color::gradient g;
-    if (g.check_init()) {
-        const vector::float4 gg[] = {
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0x00)), 0.00f),
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xff,0x00)), 0.16f),
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0xff,0x00)), 0.33f),
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0xff,0xff)), 0.50f),
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0x00,0x00,0xff)), 0.66f),
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0xff)), 0.83f),
-            vector::float4(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0x00,0x00)), 1.00f)};
-        g.init(gg,7);
-    }
-
     float inner_b = 0.20f * (sinf(static_cast<float>(now) * .5f)+1.0f);
     float outer_b = 0.01f * (sinf(static_cast<float>(now) * .5f)+1.0f);
 
-    vector::float4 yellow(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xcc,0x00)));
-    vector::float4 white(color::convert::instance().sRGB2CIELUV(color::rgba<uint8_t>(0xff,0xff,0xff)));
     for (size_t c = 0; c < led_inner_n; c++) {
         vector::float4 p = pos_inner()[c];
-        leds[0][led_outer_n + c] = ( yellow + white * powf(1.0f - p.len(), 3.0f)) * inner_b;
-        leds[1][led_outer_n + c] = ( yellow + white * powf(1.0f - p.len(), 3.0f)) * inner_b;
+        leds[0][led_outer_n + c] = ( duck_yellow + white * powf(1.0f - p.len(), 3.0f)) * inner_b;
+        leds[1][led_outer_n + c] = ( duck_yellow + white * powf(1.0f - p.len(), 3.0f)) * inner_b;
     }
 
     for (size_t c = 0; c < led_outer_n; c++) {
         float mod_walk = val_walk + (1.0f - (c * ( 1.0f / static_cast<float>(led_outer_n) ) ) );
         
-        vector::float4 out = g.repeat(mod_walk) * outer_b;
+        vector::float4 out = rainbow.repeat(mod_walk) * outer_b;
 
         leds[0][c] = out;
         leds[1][c] = out;
@@ -183,7 +172,7 @@ void Leds::start() {
         auto calc_effect = [=] (uint32_t effect) mutable {
             switch (effect) {
                 case 0:
-                black();
+                nothing();
                 break;
                 case 1:
                 color_walker();
@@ -256,13 +245,15 @@ void Leds::commit() {
         {  0, 15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1, 16, 17, 18, 19, 23, 22, 21, 20},
     };
 
+    static color::convert converter;
+
     for (size_t c = 0; c < Leds::led_n; c++) {
-        color::rgba<uint16_t> pixel0(color::rgba<uint16_t>(color::convert::instance().CIELUV2sRGB(leds[0][map[0][c]])).fix_for_ws2816());
+        color::rgba<uint16_t> pixel0(color::rgba<uint16_t>(converter.CIELUV2sRGB(leds[0][map[0][c]])).fix_for_ws2816());
         ptr0 = convert_to_one_wire(ptr0, pixel0.g);
         ptr0 = convert_to_one_wire(ptr0, pixel0.r);
         ptr0 = convert_to_one_wire(ptr0, pixel0.b);
 
-        color::rgba<uint16_t> pixel1(color::rgba<uint16_t>(color::convert::instance().CIELUV2sRGB(leds[1][map[1][c]])).fix_for_ws2816());
+        color::rgba<uint16_t> pixel1(color::rgba<uint16_t>(converter.CIELUV2sRGB(leds[1][map[1][c]])).fix_for_ws2816());
         ptr1 = convert_to_one_wire(ptr1, pixel1.g);
         ptr1 = convert_to_one_wire(ptr1, pixel1.r);
         ptr1 = convert_to_one_wire(ptr1, pixel1.b);

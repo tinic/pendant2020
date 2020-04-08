@@ -36,35 +36,35 @@ namespace vector {
         float z = 0.0f;
         float w = 0.0f;
 
-        float4() {
+        constexpr float4() {
             this->x = 0.0f;
             this->y = 0.0f;
             this->z = 0.0f;
             this->w = 0.0f;
         }
 
-        float4(const float4 &v, float a) {
+        constexpr float4(const float4 &v, float a) {
             this->x = v.x;
             this->y = v.y;
             this->z = v.z;
             this->w = a;
         }
 
-        float4(uint32_t c, float a) {
+        constexpr float4(uint32_t c, float a) {
             this->x = ((c>>16)&0xFF)*(1.0f/255.0f);
             this->y = ((c>> 8)&0xFF)*(1.0f/255.0f);
             this->z = ((c>> 0)&0xFF)*(1.0f/255.0f);
             this->w = a;
         }
 
-        float4(float v) {
+        constexpr float4(float v) {
             this->x = v;
             this->y = v;
             this->z = v;
             this->w = v;
         }
 
-        float4(float _x, float _y, float _z, float _w = 0.0f) {
+        constexpr float4(float _x, float _y, float _z, float _w = 0.0f) {
             this->x = _x;
             this->y = _y;
             this->z = _z;
@@ -73,7 +73,7 @@ namespace vector {
 
         float4 &operator=(const float4& other) = default;
 
-        float4 &operator+=(float v) {
+        constexpr float4 &operator+=(float v) {
             this->x += v;
             this->y += v;
             this->z += v;
@@ -81,7 +81,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator-=(float v) {
+        constexpr float4 &operator-=(float v) {
             this->x -= v;
             this->y -= v;
             this->z -= v;
@@ -89,7 +89,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator*=(float v) {
+        constexpr float4 &operator*=(float v) {
             this->x *= v;
             this->y *= v;
             this->z *= v;
@@ -97,7 +97,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator/=(float v) {
+        constexpr float4 &operator/=(float v) {
             this->x /= v;
             this->y /= v;
             this->z /= v;
@@ -105,7 +105,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator%=(float v) {
+        constexpr float4 &operator%=(float v) {
             this->x = fmodf(this->x, v);
             this->y = fmodf(this->y, v);
             this->z = fmodf(this->z, v);
@@ -113,7 +113,7 @@ namespace vector {
             return *this;
         }
         
-        float4 &operator+=(const float4 &b) {
+        constexpr float4 &operator+=(const float4 &b) {
             this->x += b.x;
             this->y += b.y;
             this->z += b.z;
@@ -121,7 +121,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator-=(const float4 &b) {
+        constexpr float4 &operator-=(const float4 &b) {
             this->x += b.x;
             this->y += b.y;
             this->z += b.z;
@@ -129,7 +129,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator*=(const float4 &b) {
+        constexpr float4 &operator*=(const float4 &b) {
             this->x += b.x;
             this->y += b.y;
             this->z += b.z;
@@ -137,7 +137,7 @@ namespace vector {
             return *this;
         }
 
-        float4 &operator/=(const float4 &b) {
+        constexpr float4 &operator/=(const float4 &b) {
             this->x += b.x;
             this->y += b.y;
             this->z += b.z;
@@ -153,84 +153,84 @@ namespace vector {
             return *this;
         }
 
-        float4 operator-() {
+        constexpr float4 operator-() const {
             return float4(-this->x,
                           -this->y,
                           -this->z,
                           -this->w);
         }
 
-        float4 operator+() {
+        constexpr float4 operator+() const {
             return float4(+this->x,
                           +this->y,
                           +this->z,
                           +this->w);
         }
 
-        float4 operator+(float v) {
+        constexpr float4 operator+(float v) const {
             return float4(this->x+v,
                           this->y+v,
                           this->z+v,
                           this->w+v);
         }
 
-        float4 operator-(float v) {
+        constexpr float4 operator-(float v) const {
             return float4(this->x-v,
                           this->y-v,
                           this->z-v,
                           this->w-v);
         }
 
-        float4 operator*(float v) {
+        constexpr float4 operator*(float v) const {
             return float4(this->x*v,
                           this->y*v,
                           this->z*v,
                           this->w*v);
         }
 
-        float4 operator/(float v) {
+        constexpr float4 operator/(float v) const {
             return float4(this->x/v,
                           this->y/v,
                           this->z/v,
                           this->w/v);
         }
 
-        float4 operator%(float v) {
+        constexpr float4 operator%(float v) const {
             return float4(fmodf(this->x,v),
                           fmodf(this->y,v),
                           fmodf(this->z,v),
                           fmodf(this->w,v));
         }
         
-        float4 operator+(const float4 &b) {
+        constexpr float4 operator+(const float4 &b) const {
             return float4(this->x+b.x,
                           this->y+b.y,
                           this->z+b.z,
                           this->w+b.w);
         }
 
-        float4 operator-(const float4 &b) {
+        constexpr float4 operator-(const float4 &b) const {
             return float4(this->x-b.x,
                           this->y-b.y,
                           this->z-b.z,
                           this->w-b.w);
         }
 
-        float4 operator*(const float4 &b) {
+        constexpr float4 operator*(const float4 &b) const {
             return float4(this->x*b.x,
                           this->y*b.y,
                           this->z*b.z,
                           this->w*b.w);
         }
 
-        float4 operator/(const float4 &b) {
+        constexpr float4 operator/(const float4 &b) const {
             return float4(this->x/b.x,
                           this->y/b.y,
                           this->z/b.z,
                           this->w/b.w);
         }
 
-        float4 operator%(const float4 &b) {
+        constexpr float4 operator%(const float4 &b) const {
             return float4(fmodf(this->x,b.x),
                           fmodf(this->y,b.y),
                           fmodf(this->z,b.z),
@@ -259,28 +259,28 @@ namespace vector {
             return sqrtf(xd*xd + yd*yd + zd*zd);
         }
 
-        float4 min(const float4 &b) {
+        constexpr float4 min(const float4 &b) const {
             return float4(std::min(this->x, b.x),
                           std::min(this->y, b.y),
                           std::min(this->z, b.z),
                           std::min(this->w, b.w));
         }
 
-        static float4 min(const float4 &a, const float4 &b) {
+        constexpr static float4 min(const float4 &a, const float4 &b) {
             return float4(std::min(a.x, b.x),
                           std::min(a.y, b.y),
                           std::min(a.z, b.z),
                           std::min(a.w, b.w));
         }
 
-        float4 max(const float4 &b) {
+        constexpr float4 max(const float4 &b) const {
             return float4(std::max(this->x, b.x),
                           std::max(this->y, b.y),
                           std::max(this->z, b.z),
                           std::max(this->w, b.w));
         }
 
-        static float4 max(const float4 &a, const float4 &b) {
+        constexpr static float4 max(const float4 &a, const float4 &b) {
             return float4(std::max(a.x, b.x),
                           std::max(a.y, b.y),
                           std::max(a.z, b.z),
@@ -308,39 +308,39 @@ namespace vector {
                           fabsf(a.w));
         }
 
-        float4 xx00() {
+        constexpr float4 xx00() const {
             return float4(this->x, this->x, 0.0, 0.0);
         }
 
-        float4 yy00() {
+        constexpr float4 yy00() const {
             return float4(this->y, this->y, 0.0, 0.0);
         }
 
-        float4 zz00() {
+        constexpr float4 zz00() const {
             return float4(this->z, this->z, 0.0, 0.0);
         }
         
-        float4 xy00() {
+        constexpr float4 xy00() const {
             return float4(this->x, this->y, 0.0, 0.0);
         }
 
-        float4 yx00() {
+        constexpr float4 yx00() const {
             return float4(this->y, this->x, 0.0, 0.0);
         }
 
-        float4 xz00() {
+        constexpr float4 xz00() const {
             return float4(this->x, this->z, 0.0, 0.0);
         }
 
-        float4 zx00() {
+        constexpr float4 zx00() const {
             return float4(this->z, this->x, 0.0, 0.0);
         }
 
-        float4 yz00() {
+        constexpr float4 yz00() const {
             return float4(this->y, this->z, 0.0, 0.0);
         }
 
-        float4 zy00() {
+        constexpr float4 zy00() const {
             return float4(this->z, this->y, 0.0, 0.0);
         }
 
@@ -388,7 +388,7 @@ namespace vector {
                           (a.w != 0.0f) ? (1.0f/sqrtf(a.w)) : 0.0f);
         }
 
-        float4 rcp() {
+        constexpr float4 rcp() const {
             return float4((this->x != 0.0f) ? (1.0f/this->x) : 0.0f,
                           (this->y != 0.0f) ? (1.0f/this->y) : 0.0f,
                           (this->z != 0.0f) ? (1.0f/this->z) : 0.0f,
@@ -402,7 +402,7 @@ namespace vector {
                           (a.w != 0.0f) ? (1.0f/a.w) : 0.0f);
         }
 
-        float4 lerp(const float4 &b, float v) {
+        constexpr float4 lerp(const float4 &b, float v) const {
             return float4(
               this->x * (1.0f - v) + b.x * v, 
               this->y * (1.0f - v) + b.y * v, 
@@ -410,7 +410,7 @@ namespace vector {
               this->w * (1.0f - v) + b.w * v);
         }
 
-        static float4 lerp(const float4 &a, const float4 &b, float v) {
+        constexpr static float4 lerp(const float4 &a, const float4 &b, float v) {
             return float4(
               a.x * (1.0f - v) + b.x * v, 
               a.y * (1.0f - v) + b.y * v, 
@@ -418,7 +418,7 @@ namespace vector {
               a.w * (1.0f - v) + b.w * v);
         }
 
-		float4 clamp() {
+		constexpr float4 clamp() const {
 			return float4(
 				std::min(std::max(this->x, 0.0f), 1.0f),
 				std::min(std::max(this->y, 0.0f), 1.0f),
@@ -427,15 +427,15 @@ namespace vector {
 			);
 		}
 
-        static float4 zero() {
+        constexpr static float4 zero() {
             return float4(0.0f, 0.0f, 0.0f, 0.0f);
         }
 
-        static float4 one() {
+        constexpr static float4 one() {
             return float4(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        static float4 half() {
+        constexpr static float4 half() {
             return float4(0.5f, 0.5f, 0.5f, 0.5f);
         }
 
