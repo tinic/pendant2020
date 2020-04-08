@@ -129,8 +129,8 @@ vector::float4 convert::sRGB2CIELUV(const rgba<uint8_t> &in) {
     float di = 1.0f / d;
 
     return vector::float4(l,
-        13.0f * l * ( ( 4.0f * X * di ) - wu ),
-        13.0f * l * ( ( 9.0f * Y * di ) - wv ));
+        (d > (1.0f / 65536.0f)) ? 13.0f * l * ( ( 4.0f * X * di ) - wu ) : 0.0f,
+        (d > (1.0f / 65536.0f)) ? 13.0f * l * ( ( 9.0f * Y * di ) - wv ) : 0.0f);
 }
 
 __attribute__ ((hot, optimize("O3"), flatten))
@@ -144,8 +144,8 @@ vector::float4 convert::CIELUV2sRGB(const vector::float4 &in) {
     
     float Y = ( in.x + 0.16f ) * (1.0f / 1.16f);
     float y = ( in.x <= 0.08f ) ? ( in.x * 0.1107056f ) : ( Y * Y * Y );
-    float x = 2.25f * y * up_13l * vp_13li;
-    float z = y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) * (1.0f / 4.0f) * vp_13li;
+    float x = (vp_13l > (1.0f / 65536.0f)) ? ( 2.25f * y * up_13l * vp_13li ) : 0.0f;
+    float z = (vp_13l > (1.0f / 65536.0f)) ? ( y * ( 156.0f * in.x - 3.0f * up_13l - 20.0f * vp_13l ) * (1.0f / 4.0f) * vp_13li ) : 0.0f;
 
     float r =  3.2404542f * x + -1.5371385f * y + -0.4985314f * z;
     float g = -0.9692660f * x +  1.8760108f * y +  0.0415560f * z;
