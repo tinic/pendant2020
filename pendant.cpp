@@ -99,6 +99,8 @@ void Pendant::init() {
     Leds::instance().start();
 }
 
+extern "C" I2C_HandleTypeDef hi2c1;
+
 void Pendant::Run() {
     HAL_TIM_Base_Start_IT(&htim2);
     while (1) {

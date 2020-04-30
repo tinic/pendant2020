@@ -131,8 +131,8 @@ void Leds::rainbow() {
 
     float val_walk = (1.0f - static_cast<float>(fmodf(static_cast<float>(now * speed), 1.0)));
 
-    float inner_b = 0.20f;
-    float outer_b = 0.01f;
+    float inner_b = 0.20f * (sinf(now) + 1.0f);
+    float outer_b = 0.01f * (sinf(now) + 1.0f);
 
     for (size_t c = 0; c < led_inner_n; c++) {
         vector::float4 p = pos_inner()[c];
@@ -227,7 +227,7 @@ void Leds::commit() {
         // TODO: optimize using DSP instructions
         for (uint32_t c = 0; c < 16; c++) {
             if ( ((1<<(15-c)) & v) != 0 ) {
-                *p++ = 0b11110000;
+                *p++ = 0b11111000;
             } else {
                 *p++ = 0b10000000;
             }

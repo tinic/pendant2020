@@ -36,8 +36,8 @@ BQ25895 &BQ25895::instance() {
         bq25895.deviceChecked = true;
         uint8_t status = 0x8;
         uint8_t value = 0x0;
-        if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr, &status, 1, 1000000) == HAL_OK &&
-            HAL_I2C_Master_Receive(&hi2c1, i2caddr, &value, 1, 1000000) == HAL_OK) {
+        if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr, &status, 1, 1000) == HAL_OK &&
+            HAL_I2C_Master_Receive(&hi2c1, i2caddr, &value, 1, 1000) == HAL_OK) {
             bq25895.devicePresent = true;
         }
         //ext_irq_register(PIN_PA16, PinInterrupt_C);
