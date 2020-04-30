@@ -29,7 +29,7 @@
       {
         "label": "Pendant2020: Install Firmware",
         "type": "shell",
-        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_bootloaded.bin 0x08008000 verify reset exit'",
+        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_bootloaded.bin 0x08000000 verify reset exit'",
         "options": {
           "cwd": "${workspaceRoot}/build_bootloaded"
         },
