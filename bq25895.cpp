@@ -36,9 +36,12 @@ BQ25895 &BQ25895::instance() {
         bq25895.deviceChecked = true;
         uint8_t status = 0x8;
         uint8_t value = 0x0;
-        if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr, &status, 1, 1000) == HAL_OK &&
-            HAL_I2C_Master_Receive(&hi2c1, i2caddr, &value, 1, 1000) == HAL_OK) {
-            bq25895.devicePresent = true;
+        // https://jure.tuta.si/?p=7 ... This is asinine
+        for( ; HAL_I2C_IsDeviceReady(&hi2c1, i2caddr<<1, 1, HAL_MAX_DELAY) != HAL_OK ;) { }
+        if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, &status, 1, HAL_MAX_DELAY) == HAL_OK) {
+            if(HAL_I2C_Master_Receive(&hi2c1, i2caddr<<1, &value, 1, HAL_MAX_DELAY) == HAL_OK) {
+                bq25895.devicePresent = true;
+            }
         }
         //ext_irq_register(PIN_PA16, PinInterrupt_C);
     }
@@ -148,8 +151,8 @@ bool BQ25895::IsInFaultState() {
      
 uint8_t BQ25895::getRegister(uint8_t address) {
     uint8_t value = 0x0;
-    if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr, &address, 1, 1000) == HAL_OK &&
-        HAL_I2C_Master_Receive(&hi2c1, i2caddr, &value, 1, 1000) == HAL_OK) {
+    if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, &address, 1, 1000) == HAL_OK &&
+        HAL_I2C_Master_Receive(&hi2c1, i2caddr<<1, &value, 1, 1000) == HAL_OK) {
         return value;
     }
     return 0;
@@ -159,7 +162,7 @@ void BQ25895::setRegister(uint8_t address, uint8_t value) {
     uint8_t set[2];
     set[0] = address;
     set[1] = value;
-    HAL_I2C_Master_Transmit(&hi2c1, i2caddr, set, 2, 1000);
+    HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, set, 2, 1000);
 }
 
 void BQ25895::setRegisterBits(uint8_t address, uint8_t mask) {
