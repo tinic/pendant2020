@@ -39,14 +39,14 @@
         "problemMatcher": []
       },
       {
-        "label": "Pendant2020: Install Debug",
+        "label": "Pendant2020: Install Firmware Debug",
         "type": "shell",
-        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_debugging.bin 0x08000000 verify reset exit'",
+        "command": "openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c 'program pendant2020_bootloaded.bin 0x08010000 verify reset exit'",
         "options": {
-          "cwd": "${workspaceRoot}/build_debugging"
+          "cwd": "${workspaceRoot}/build_bootloaded"
         },
         "dependsOn": [
-          "Pendant2020: Build Debug"
+          "Pendant2020: Build Firmware Debug"
         ],
         "problemMatcher": []
       },
@@ -73,11 +73,11 @@
         ]
       },
       {
-        "label": "Pendant2020: Clean Debug",
+        "label": "Pendant2020: Clean Firmware Debug",
         "type": "shell",
         "command": "ninja clean",
         "options": {
-          "cwd": "${workspaceRoot}/build_debugging"
+          "cwd": "${workspaceRoot}/build_bootloaded"
         },
         "problemMatcher": [
           "$gcc"
@@ -156,14 +156,14 @@
         "problemMatcher": "$gcc"
       },
       {
-        "label": "Pendant2020: Pre-Build Debug",
+        "label": "Pendant2020: Pre-Build Firmware Debug",
         "type": "shell",
         "dependsOn": [
-          "Pendant2020: Create Debug Build Directory"
+          "Pendant2020: Create Firmware Debug Build Directory"
         ],
-        "command": "cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE='../arm-gcc-toolchain.cmake' -DCMAKE_BUILD_TYPE=Debug ./..",
+        "command": "cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE='../arm-gcc-toolchain.cmake' -DCMAKE_BUILD_TYPE=Debug -DBOOTLOADED=1 ./..",
         "options": {
-          "cwd": "${workspaceRoot}/build_debugging",
+          "cwd": "${workspaceRoot}/build_bootloaded",
           "INCLUDE": "${config:arm-none-eabi.include}",
           "LIB": "${config:arm-none-eabi.lib}"
         },
@@ -270,14 +270,14 @@
         ]
       },
       {
-        "label": "Pendant2020: Build Debug",
+        "label": "Pendant2020: Build Firmware Debug",
         "type": "shell",
         "command": "ninja",
         "dependsOn": [
-          "Pendant2020: Pre-Build Debug"
+          "Pendant2020: Pre-Build Firmware Debug"
         ],
         "options": {
-          "cwd": "${workspaceRoot}/build_debugging"
+          "cwd": "${workspaceRoot}/build_bootloaded"
         },
         "group": {
           "kind": "build",
@@ -334,11 +334,11 @@
         "label": "Pendant2020: Create Firmware Debug Directory",
         "type": "shell",
         "linux": {
-            "command": "mkdir -p ${workspaceRoot}/build_debugging"
+            "command": "mkdir -p ${workspaceRoot}/build_bootloaded"
         },
         "windows": {
             "command": "cmd",
-            "args": ["/C", "if not exist ${workspaceRoot}\\build_debugging mkdir ${workspaceRoot}\\build_debugging"]
+            "args": ["/C", "if not exist ${workspaceRoot}\\build_bootloaded mkdir ${workspaceRoot}\\build_bootloaded"]
         }
       }
     ]
