@@ -30,6 +30,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./sdd1306.h"
 #include "./system_time.h"
 #include "./leds.h"
+#include "./printf.h"
 
 #include "main.h"
 
@@ -89,6 +90,8 @@ Pendant &Pendant::instance() {
 
 void Pendant::init() {
 
+    printf("Pendant::init() 0\n");
+
     if (BQ25895::instance().DevicePresent()) {
         BQ25895::instance().SetBoostVoltage(4550);
         BQ25895::instance().DisableWatchdog();
@@ -97,8 +100,12 @@ void Pendant::init() {
         BQ25895::instance().SetInputCurrent(500);
     }
 
+    printf("Pendant::init() 1\n");
+
     if (SDD1306::instance().DevicePresent()) {
     }
+
+    printf("Pendant::init() 2\n");
 
     Leds::instance().start();
 }
@@ -106,6 +113,8 @@ void Pendant::init() {
 extern "C" I2C_HandleTypeDef hi2c1;
 
 void Pendant::Run() {
+    printf("Pendant::Run()\n");
+
     HAL_TIM_Base_Start_IT(&htim2);
     while (1) {
         __WFI();

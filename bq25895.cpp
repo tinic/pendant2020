@@ -22,6 +22,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include "./bq25895.h"
 #include "./system_time.h"
+#include "./printf.h"
 
 #include "stm32f401xc.h"
 #include "stm32f4xx_hal.h"
@@ -34,18 +35,30 @@ BQ25895 &BQ25895::instance() {
     static BQ25895 bq25895;
     if (!bq25895.deviceChecked) {
         bq25895.deviceChecked = true;
-        uint8_t status = 0x8;
-        uint8_t value = 0x0;
-        // https://jure.tuta.si/?p=7 ... This is asinine
-        for( ; HAL_I2C_IsDeviceReady(&hi2c1, i2caddr<<1, 1, HAL_MAX_DELAY) != HAL_OK ;) { }
-        if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, &status, 1, HAL_MAX_DELAY) == HAL_OK) {
-            if(HAL_I2C_Master_Receive(&hi2c1, i2caddr<<1, &value, 1, HAL_MAX_DELAY) == HAL_OK) {
-                bq25895.devicePresent = true;
-            }
+        if (bq25895.init()) {
+            bq25895.devicePresent = true;
         }
         //ext_irq_register(PIN_PA16, PinInterrupt_C);
     }
     return bq25895;
+}
+
+bool BQ25895::init() const {
+    printf("BQ25895::init()\n");
+    
+    // https://jure.tuta.si/?p=7 ... This is asinine
+    for( ; HAL_I2C_IsDeviceReady(&hi2c1, i2caddr<<1, 1, HAL_MAX_DELAY) != HAL_OK ;) { }
+
+    uint8_t status = 0x8;
+    uint8_t value = 0x0;
+
+    if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, &status, 1, HAL_MAX_DELAY) == HAL_OK) {
+        if(HAL_I2C_Master_Receive(&hi2c1, i2caddr<<1, &value, 1, HAL_MAX_DELAY) == HAL_OK) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void BQ25895::PinInterrupt_C() {

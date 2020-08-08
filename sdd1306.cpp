@@ -20,7 +20,8 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "sdd1306.h"
+#include "./sdd1306.h"
+#include "./printf.h"
 
 #include "stm32f401xc.h"
 #include "stm32f4xx_hal.h"
@@ -47,6 +48,8 @@ SDD1306 &SDD1306::instance() {
 }
 
 bool SDD1306::init() const {
+    printf("SDD1306::init()\n");
+
     HAL_GPIO_WritePin(GPIOB, OLED_CS_Pin, GPIO_PIN_SET);
 
     // Toggle RESET line

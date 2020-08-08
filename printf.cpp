@@ -31,9 +31,25 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern "C" UART_HandleTypeDef huart2;
 
+extern "C" {
+
+int errno;
+
+int __io_putchar(int ch) {
+	uint8_t c = ch;
+    HAL_UART_Transmit(&huart2, (uint8_t *)&c, 1, HAL_MAX_DELAY);
+	return 1;
+}
+
+int __io_getchar(void) {
+	return 0;
+}
+
+}
+
 static void putchar(char c)
 {	
-    HAL_UART_Transmit(&huart2, (uint8_t *)&c, 1, 1000);
+    HAL_UART_Transmit(&huart2, (uint8_t *)&c, 1, HAL_MAX_DELAY);
 }
 
 static void simple_outputchar(char **str, char c)

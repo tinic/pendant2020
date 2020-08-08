@@ -25,6 +25,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "emfat.h"
+#if defined(PENDANT2020)
+#include "../../printf.h"
+#endif  // #if defined(PENDANT2020)
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,6 +130,7 @@ static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, 
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
 /* USER CODE END 0 */
 
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -181,6 +185,7 @@ int main(void)
   //MX_USB_DEVICE_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
 #if defined(PENDANT2020) && defined(BOOTLOADER)
   emfat_init(&emfat, "duckpond", emfat_entries);
 #endif  // #if defined(BOOTLOADER)

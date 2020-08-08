@@ -50,7 +50,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <stdio.h>
+//#include <stdio.h>
 #include <signal.h>
 #include <time.h>
 #include <sys/time.h>
@@ -91,7 +91,7 @@ void _exit (int status)
 	while (1) {}		/* Make sure we hang here */
 }
 
-__attribute__((weak)) int _read(int file, char *ptr, int len)
+__attribute__((used)) int _read(int file, char *ptr, int len)
 {
 	int DataIdx;
 
@@ -103,7 +103,7 @@ __attribute__((weak)) int _read(int file, char *ptr, int len)
 return len;
 }
 
-__attribute__((weak)) int _write(int file, char *ptr, int len)
+__attribute__((used)) int _write(int file, char *ptr, int len)
 {
 	int DataIdx;
 
@@ -114,29 +114,29 @@ __attribute__((weak)) int _write(int file, char *ptr, int len)
 	return len;
 }
 
-int _close(int file)
+__attribute__((used)) int _close(int file)
 {
 	return -1;
 }
 
 
-int _fstat(int file, struct stat *st)
+__attribute__((used)) int _fstat(int file, struct stat *st)
 {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 
-int _isatty(int file)
+__attribute__((used)) int _isatty(int file)
 {
 	return 1;
 }
 
-int _lseek(int file, int ptr, int dir)
+__attribute__((used)) int _lseek(int file, int ptr, int dir)
 {
 	return 0;
 }
 
-int _open(char *path, int flags, ...)
+__attribute__((used)) int _open(char *path, int flags, ...)
 {
 	/* Pretend like we always fail */
 	return -1;

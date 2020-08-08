@@ -24,6 +24,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./vector.h"
 #include "./timeline.h"
 #include "./model.h"
+#include "./printf.h"
 
 #include "stm32f401xc.h"
 #include "stm32f4xx_hal.h"
@@ -107,6 +108,7 @@ const std::array<vector::float4, Leds::led_inner_n> &Leds::pos_inner() {
 }
 
 void Leds::init() {
+    printf("Leds::init()\n");
     nothing();
 }
 
@@ -151,6 +153,7 @@ void Leds::rainbow() {
 }
 
 void Leds::start() {
+    printf("Leds::start()\n");
 
     // Turn on LED Mosfet
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
