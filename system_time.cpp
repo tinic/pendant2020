@@ -30,9 +30,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 extern "C" TIM_HandleTypeDef htim2;
 
 extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    (void)htim;
+#ifndef BOOTLOADER
     if (htim == &htim2) {
         Model::instance().SetTime(system_time());
     }
+#endif  // #ifndef BOOTLOADER
 }
 
 // Generate system time based on 32-bit cycle count

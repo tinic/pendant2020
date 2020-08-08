@@ -71,7 +71,7 @@ emfat_t emfat;
 
 #define FIRMWARE_SIZE (192*1024)
 #define FIRMWARE_START (64*1024)
-#define FIRMWARE_ADDR (0x80000000)
+#define FIRMWARE_ADDR (0x08000000)
 #define CMA_TIME EMFAT_ENCODE_CMA_TIME(9,7,2020,12,0,0)
 #define CMA { CMA_TIME, CMA_TIME, CMA_TIME }
 
@@ -130,7 +130,6 @@ static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, 
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
 /* USER CODE END 0 */
 
-
 /**
   * @brief  The application entry point.
   * @retval int
@@ -138,7 +137,6 @@ static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, 
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -158,17 +156,30 @@ int main(void)
   MX_GPIO_Init();
   // Check user button
   if (HAL_GPIO_ReadPin(GPIOB, SWITCH3_Pin) != 0) {
-      /* Check if valid stack address (RAM address) then jump to user application */
-      if ((((*(__IO uint32_t*)(FIRMWARE_ADDR+FIRMWARE_START))) & 0x2FFE0000 ) == 0x20000000) {
-          typedef void (*pFunction)(void);
-          static pFunction Jump_To_Application;
-          static uint32_t JumpAddress;
-          /* Jump to user application */
-          JumpAddress = *(__IO uint32_t*)(FIRMWARE_ADDR+FIRMWARE_START+4);
-          Jump_To_Application = (pFunction) JumpAddress;
-          /* Initialize user application's Stack Pointer */
-          __set_MSP(*(__IO uint32_t*)(FIRMWARE_ADDR+FIRMWARE_START));
-          Jump_To_Application();
+      /* Check to see if we are in the main context */
+      if ((__get_IPSR() & IPSR_ISR_Msk) == 0) {
+        /* Check if valid stack address (RAM address) then jump to user application */
+        if ((((*(volatile uint32_t *)(FIRMWARE_ADDR + FIRMWARE_START))) & 0x2FFE0000 ) == 0x20000000) {
+
+          __HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
+          __HAL_FLASH_DATA_CACHE_DISABLE();
+          __HAL_FLASH_PREFETCH_BUFFER_DISABLE();
+
+	        HAL_RCC_DeInit();
+        	HAL_DeInit();
+          SysTick->CTRL = 0;
+          SysTick->LOAD = 0;
+          SysTick->VAL = 0;
+          __HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH();
+
+          __set_MSP(*(volatile uint32_t *)(FIRMWARE_ADDR + FIRMWARE_START));
+
+          void (*SysMemBootJump)(void);
+          SysMemBootJump = (void (*)(void)) (*((volatile uint32_t *)(FIRMWARE_ADDR + FIRMWARE_START + 4)));
+          SysMemBootJump();
+
+          while( 1 ) {}
+        }
       }
   }
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)

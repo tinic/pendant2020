@@ -88,8 +88,7 @@ Pendant &Pendant::instance() {
     return pendant;
 }
 
-void Pendant::init() {
-
+void Pendant::init() { 
     printf("Pendant::init() 0\n");
 
     if (BQ25895::instance().DevicePresent()) {
@@ -108,6 +107,7 @@ void Pendant::init() {
     printf("Pendant::init() 2\n");
 
     Leds::instance().start();
+
 }
 
 extern "C" I2C_HandleTypeDef hi2c1;

@@ -42,7 +42,6 @@ Bootloader &Bootloader::instance() {
 }
 
 void Bootloader::init() {
-
     if (BQ25895::instance().DevicePresent()) {
         BQ25895::instance().SetBoostVoltage(4550);
         BQ25895::instance().DisableWatchdog();
@@ -50,7 +49,6 @@ void Bootloader::init() {
         BQ25895::instance().OneShotADC();
         BQ25895::instance().SetInputCurrent(500);
     }
-
 }
 
 void Bootloader::Run() {

@@ -29,7 +29,7 @@ if(BOOTLOADER)
 elseif(BOOTLOADED)
     set(PRJ_NAME pendant2020_bootloaded)
     set(CMSISLINKLD STM32F401CCUX_FLASH_BOOTLOADED.ld)
-    set(BASE_ADDRESS 0x08000000)
+    set(BASE_ADDRESS 0x08010000)
     message(status "Building bootloaded binary")
 else(BOOTLOADER)
     set(PRJ_NAME pendant2020_debugging)
@@ -104,6 +104,7 @@ if(BOOTLOADER)
         system_time.cpp
         bq25895.cpp
         sdd1306.cpp
+        printf.cpp
         )
 else(BOOTLOADER)
     set(main_SRCS
