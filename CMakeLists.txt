@@ -103,6 +103,7 @@ if(BOOTLOADER)
         timeline.cpp
         system_time.cpp
         bq25895.cpp
+        sdd1306.cpp
         )
 else(BOOTLOADER)
     set(main_SRCS
@@ -110,6 +111,7 @@ else(BOOTLOADER)
         timeline.cpp
         system_time.cpp
         bq25895.cpp
+        sdd1306.cpp
         model.cpp
         leds.cpp
         color.cpp

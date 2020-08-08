@@ -27,6 +27,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./model.h"
 #include "./timeline.h"
 #include "./bq25895.h"
+#include "./sdd1306.h"
 #include "./system_time.h"
 #include "./leds.h"
 
@@ -94,6 +95,9 @@ void Pendant::init() {
         BQ25895::instance().DisableOTG();
         BQ25895::instance().OneShotADC();
         BQ25895::instance().SetInputCurrent(500);
+    }
+
+    if (SDD1306::instance().DevicePresent()) {
     }
 
     Leds::instance().start();

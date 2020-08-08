@@ -151,8 +151,8 @@ bool BQ25895::IsInFaultState() {
      
 uint8_t BQ25895::getRegister(uint8_t address) {
     uint8_t value = 0x0;
-    if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, &address, 1, 1000) == HAL_OK &&
-        HAL_I2C_Master_Receive(&hi2c1, i2caddr<<1, &value, 1, 1000) == HAL_OK) {
+    if (HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, &address, 1, HAL_MAX_DELAY) == HAL_OK &&
+        HAL_I2C_Master_Receive(&hi2c1, i2caddr<<1, &value, 1, HAL_MAX_DELAY) == HAL_OK) {
         return value;
     }
     return 0;
@@ -162,7 +162,7 @@ void BQ25895::setRegister(uint8_t address, uint8_t value) {
     uint8_t set[2];
     set[0] = address;
     set[1] = value;
-    HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, set, 2, 1000);
+    HAL_I2C_Master_Transmit(&hi2c1, i2caddr<<1, set, 2, HAL_MAX_DELAY);
 }
 
 void BQ25895::setRegisterBits(uint8_t address, uint8_t mask) {
