@@ -105,6 +105,9 @@ static void MX_IWDG_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 #if defined(PENDANT2020) && defined(BOOTLOADER)
+
+bool g_flashed = false;
+
 static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t userdata) {
     for (int c = 0; c < size; c++) {
         *data ++ = ((const uint8_t *)(FIRMWARE_ADDR + FIRMWARE_START))[c + offset];
@@ -112,6 +115,7 @@ static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t 
 }
 
 static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, size_t userdata) {
+    g_flashed = true;
     HAL_FLASH_Unlock();
     if (offset == 0) {
       __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR | HAL_FLASH_ERROR_PGA);

@@ -28,7 +28,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "main.h"
 
-extern "C" IWDG_HandleTypeDef hiwdg;
+extern "C" TIM_HandleTypeDef htim2;
 
 extern "C" {
     void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -56,6 +56,7 @@ void Bootloader::init() {
 }
 
 void Bootloader::Run() {
+    HAL_TIM_Base_Start_IT(&htim2);
     while (1) {
         __WFI();
     }

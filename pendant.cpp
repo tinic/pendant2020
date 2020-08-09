@@ -35,6 +35,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "main.h"
 
 extern "C" TIM_HandleTypeDef htim2;
+extern "C" I2C_HandleTypeDef hi2c1;
 extern "C" IWDG_HandleTypeDef hiwdg;
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -109,8 +110,6 @@ void Pendant::init() {
     Leds::instance().start();
 
 }
-
-extern "C" I2C_HandleTypeDef hi2c1;
 
 void Pendant::Run() {
     printf("Pendant::Run()\n");

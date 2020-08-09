@@ -29,8 +29,23 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern "C" TIM_HandleTypeDef htim2;
 
+extern "C" bool g_flashed;
+
 extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     (void)htim;
+#ifdef BOOTLOADER
+    if (htim == &htim2) {
+        static double s_system_time = 0.0;
+        static double s_flash_time = 0.0;
+        s_system_time = system_time();
+        if (g_flashed && s_flash_time == 0.0) {
+            s_flash_time = s_system_time;
+        }
+        if (g_flashed && (s_system_time - s_flash_time) > 5.0) {
+            HAL_NVIC_SystemReset();
+        }
+    }
+#endif  // #ifdef BOOTLOADER
 #ifndef BOOTLOADER
     if (htim == &htim2) {
         Model::instance().SetTime(system_time());
