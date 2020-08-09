@@ -58,7 +58,6 @@ void Bootloader::init() {
 void Bootloader::Run() {
     while (1) {
         __WFI();
-        HAL_IWDG_Refresh(&hiwdg);
     }
 }
 
