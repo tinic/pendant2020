@@ -112,32 +112,26 @@ static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t 
 }
 
 static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, size_t userdata) {
+    HAL_FLASH_Unlock();
     if (offset == 0) {
-      uint32_t pageError = 0;
-      FLASH_EraseInitTypeDef sector4 = { 
-          FLASH_TYPEERASE_SECTORS, 
-          0, 
-          FLASH_SECTOR_4, // Sector 4 0x0801 0000 - 0x0801 FFFF (64K)
-          1, // Sector 4
-          FLASH_VOLTAGE_RANGE_3
-      };
-      HAL_FLASHEx_Erase(&sector4, &pageError);
+      __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR | HAL_FLASH_ERROR_PGA);
+      printf("Erasing Sector 4\n");
+      FLASH_Erase_Sector(FLASH_SECTOR_4, VOLTAGE_RANGE_3);
     }
     if (offset == 65536) {
-      uint32_t pageError = 0;
-      FLASH_EraseInitTypeDef sector5 = { 
-          FLASH_TYPEERASE_SECTORS, 
-          0, 
-          FLASH_SECTOR_5, // Sector 5 0x0802 0000 - 0x0803 FFFF (128K) 
-          1, // Sector 5
-          FLASH_VOLTAGE_RANGE_3
-      };
-      HAL_FLASHEx_Erase(&sector5, &pageError);
+      __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR | HAL_FLASH_ERROR_PGA);
+      printf("Erasing Sector 5\n");
+      FLASH_Erase_Sector(FLASH_SECTOR_5, VOLTAGE_RANGE_3);
     }
-    HAL_FLASH_Unlock();
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR | HAL_FLASH_ERROR_PGA);
     for (int c = 0; c < size; c++) {
-      HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, FIRMWARE_ADDR + FIRMWARE_START + offset + c, data[c]);
+      uint32_t addr = FIRMWARE_ADDR + FIRMWARE_START + offset + c;
+      HAL_StatusTypeDef status = 
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, addr, data[c]);
+      if (status != HAL_OK) {
+          printf("HAL_FLASH_Program %08x %08x %08x %08x\n", status, HAL_FLASH_GetError(), addr, data[c]);
+          break;
+      }
     }
     HAL_FLASH_Lock();
 }
@@ -211,7 +205,7 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_USART2_UART_Init();
-  MX_IWDG_Init();
+  //MX_IWDG_Init();
   MX_TIM2_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
