@@ -112,20 +112,34 @@ static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t 
 }
 
 static void firmware_write_proc(const uint8_t *data, int size, uint32_t offset, size_t userdata) {
-    HAL_FLASH_Lock();
-    for (int c = 0; c < (int)(size/sizeof(uint64_t)); c++) {
-        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, FIRMWARE_START + offset + c*sizeof(uint64_t),
-                ((uint64_t)(data[c*sizeof(uint64_t) + 0]) <<  0) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 1]) <<  8) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 2]) << 16) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 3]) << 24) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 4]) << 32) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 5]) << 40) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 6]) << 48) |
-                ((uint64_t)(data[c*sizeof(uint64_t) + 7]) << 56)
-        );
+    if (offset == 0) {
+      uint32_t pageError = 0;
+      FLASH_EraseInitTypeDef sector4 = { 
+          FLASH_TYPEERASE_SECTORS, 
+          0, 
+          FLASH_SECTOR_4, // Sector 4 0x0801 0000 - 0x0801 FFFF (64K)
+          1, // Sector 4
+          FLASH_VOLTAGE_RANGE_3
+      };
+      HAL_FLASHEx_Erase(&sector4, &pageError);
+    }
+    if (offset == 65536) {
+      uint32_t pageError = 0;
+      FLASH_EraseInitTypeDef sector5 = { 
+          FLASH_TYPEERASE_SECTORS, 
+          0, 
+          FLASH_SECTOR_5, // Sector 5 0x0802 0000 - 0x0803 FFFF (128K) 
+          1, // Sector 5
+          FLASH_VOLTAGE_RANGE_3
+      };
+      HAL_FLASHEx_Erase(&sector5, &pageError);
     }
     HAL_FLASH_Unlock();
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR | HAL_FLASH_ERROR_PGA);
+    for (int c = 0; c < size; c++) {
+      HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, FIRMWARE_ADDR + FIRMWARE_START + offset + c, data[c]);
+    }
+    HAL_FLASH_Lock();
 }
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
 /* USER CODE END 0 */
@@ -152,7 +166,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-#if 0 //defined(PENDANT2020) && defined(BOOTLOADER)
+#if defined(PENDANT2020) && defined(BOOTLOADER)
   MX_GPIO_Init();
   // Check user button
   if (HAL_GPIO_ReadPin(GPIOB, SWITCH3_Pin) != 0) {
