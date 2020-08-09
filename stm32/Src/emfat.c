@@ -676,8 +676,11 @@ void write_data_sector(emfat_t *emfat, const uint8_t *data, uint32_t rel_sect)
 		// TODO: handle changing a filesize
 		return;
 	}
-	if (le->writecb != NULL)
-		le->writecb(data, SECT, rel_sect * SECT + le->offset, le->user_data);
+	if (le->writecb != NULL) {
+		uint32_t offset = cluster - le->priv.first_clust;
+		offset = offset * CLUST + rel_sect * SECT;
+		le->writecb(data, SECT, offset + le->offset, le->user_data);
+	}
 }
 
 void write_fat_sector(emfat_t *emfat, const uint8_t *data, uint32_t rel_sect)

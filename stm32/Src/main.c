@@ -106,8 +106,8 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 #if defined(PENDANT2020) && defined(BOOTLOADER)
 static void firmware_read_proc(uint8_t *data, int size, uint32_t offset, size_t userdata) {
-    for (int c = 0; c < (int)(size/sizeof(uint64_t)); c++) {
-        *data ++ = ((const uint8_t *)(FIRMWARE_ADDR + FIRMWARE_START))[c];
+    for (int c = 0; c < size; c++) {
+        *data ++ = ((const uint8_t *)(FIRMWARE_ADDR + FIRMWARE_START))[c + offset];
     }
 }
 
