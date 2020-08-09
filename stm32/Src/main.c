@@ -152,7 +152,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-#if 0// defined(PENDANT2020) && defined(BOOTLOADER)
+#if 0 //defined(PENDANT2020) && defined(BOOTLOADER)
   MX_GPIO_Init();
   // Check user button
   if (HAL_GPIO_ReadPin(GPIOB, SWITCH3_Pin) != 0) {
@@ -183,6 +183,11 @@ int main(void)
       }
   }
 #endif  // #if defined(PENDANT2020) && defined(BOOTLOADER)
+
+#if defined(PENDANT2020) && defined(BOOTLOADER)
+  emfat_init(&emfat, "duckpond", emfat_entries);
+#endif  // #if defined(BOOTLOADER)
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -193,13 +198,10 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_IWDG_Init();
-  MX_USB_DEVICE_Init();
   MX_TIM2_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
-#if defined(PENDANT2020) && defined(BOOTLOADER)
-  emfat_init(&emfat, "duckpond", emfat_entries);
-#endif  // #if defined(BOOTLOADER)
 
   /* USER CODE END 2 */
 
