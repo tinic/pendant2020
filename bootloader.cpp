@@ -26,6 +26,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "./bootloader.h"
 #include "./bq25895.h"
 
+#include "main.h"
+
+extern "C" IWDG_HandleTypeDef hiwdg;
+
 extern "C" {
     void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
         (void)GPIO_Pin;
@@ -54,6 +58,7 @@ void Bootloader::init() {
 void Bootloader::Run() {
     while (1) {
         __WFI();
+        HAL_IWDG_Refresh(&hiwdg);
     }
 }
 
